@@ -2,6 +2,7 @@ import json
 import string
 from enum import Enum
 
+from django.db.models import QuerySet, Model
 from django.http import HttpResponse
 
 
@@ -23,15 +24,17 @@ class StatusCode(Enum):
     INTERNAL_SERVER_ERROR = 500
 
 
-class ResponseUtil:
-    @staticmethod
-    def build_success_json_response(data: object = None, message: string = "SUCCESS"):
-        response = {"status_code": StatusCode.OK.value, "message": message, "data": data}
-        print(json.dumps(response))
-        return HttpResponse(status=200, content=json.dumps(response), content_type="application/json")
+def build_success_json_response(result: QuerySet | Model, message: string = "SUCCESS"):
+    if isinstance(result, QuerySet):
+        data = []
+        for elm in result:
+            data.append(elm.to_dict())
+    else:
+        data = result.to_dict()
+    resp_body = {"status_code": StatusCode.OK.value, "message": message, "data": data}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
-    @staticmethod
-    def build_failed_json_response(status_code: StatusCode, message: string = "FAILED"):
-        response = {"status_code": status_code.value, "message": message}
-        print(json.dumps(response))
-        return HttpResponse(status=status_code.value, content=json.dumps(response), content_type="application/json")
+
+def build_failed_json_response(status_code: StatusCode, message: string = "FAILED"):
+    response = {"status_code": status_code.value, "message": message}
+    return HttpResponse(status=status_code.value, content=json.dumps(response), content_type="application/json")
