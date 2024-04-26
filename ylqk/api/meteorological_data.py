@@ -2,13 +2,7 @@ from django.http import HttpRequest
 from django.views.decorators.http import require_GET
 
 from utils.response_util import *
-from ylqk.models.cloud_data import CloudData
-from ylqk.models.humidity_data import HumidityData
-from ylqk.models.other_meteorological_data import OtherMeteorologicalData
-from ylqk.models.pressure_data import PressureData
-from ylqk.models.station_info import StationInfo
-from ylqk.models.temperature_data import TemperatureData
-from ylqk.models.wind_data import WindData
+from ylqk.models import *
 
 
 @require_GET
