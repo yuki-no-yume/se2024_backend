@@ -8,17 +8,17 @@ from ylqk.models import *
 @require_GET
 def get_station_info(request: HttpRequest):
     station_id = request.GET.get("station_id")
-    station_info = StationInfo.objects.filter(station_id=station_id).first()
-    if isinstance(station_info, QuerySet) or isinstance(station_info, Model):
-        return build_success_json_response(station_info)
+    station = StationInfo.objects.filter(station_id=station_id).first()
+    if isinstance(station, QuerySet) or isinstance(station, Model):
+        return build_success_json_response(station)
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND, "站点id不存在")
 
 
 @require_GET
 def get_all_station_info(request: HttpRequest):
-    station_info = StationInfo.objects.all()
-    return build_success_json_response(station_info)
+    stations = StationInfo.objects.all()
+    return build_success_json_response(stations)
 
 
 @require_GET
