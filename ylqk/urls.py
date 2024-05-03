@@ -16,6 +16,7 @@ urlpatterns = [
     path('login/',Login.as_view()),
     path('register',Register.as_view()),
 
+
     # 气象数据查询接口
     path("meteorological/station-info", get_station_info),
     path("meteorological/station-info/all", get_all_station_info),
@@ -44,4 +45,5 @@ urlpatterns = [
     # path('sub-admin/unban',), # 取消用户禁言
     path('sub-admin/manual',create_forewarn), # 手动创建灾害预警
     path('sub-admin/modify',modify_forewarn), # 删除灾害预警
+
 ]

@@ -19,6 +19,7 @@ def get_admins_all(request:HttpRequest):
 
 @require_GET
 def get_users_all(request:HttpRequest):
+
     id = request.GET.get("user_id")
     mails = ForewarnForUser.objects.filter(user_id=id).filter().all()
     if isinstance(mails,QuerySet) or isinstance(mails,Model):
@@ -34,7 +35,6 @@ def get_private_all(request:HttpRequest): #还可以有个已发送？
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND,"尚无灾害预警信息")
 
-
 @require_GET
 def get_system_all(request:HttpRequest):
     mails = ApplicationForGlobal.objects.filter().all()
@@ -42,7 +42,7 @@ def get_system_all(request:HttpRequest):
         return build_success_json_response(mails)
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND, "尚无系统信息")
-## 可以查看
+
 
 @require_GET
 def get_mail_by_id(request:HttpRequest):
