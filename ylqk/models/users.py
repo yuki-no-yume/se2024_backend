@@ -10,7 +10,6 @@ class UserProfile(models.Model):
     )
     username = models.CharField(max_length=32, verbose_name="用户名")
     password = models.CharField(max_length=64)
-    token = models.CharField(max_length=64,null=True,blank=True)
     email = models.EmailField()
     level = models.CharField(max_length=3,choices=type)
 

@@ -1,5 +1,5 @@
 from django.db import models
-
+from polymorphic.models import PolymorphicModel
 
 # 模型输出还没确定
 class AIDisasterForecast(models.Model):
@@ -21,11 +21,9 @@ class AIDisasterForecast(models.Model):
         }
 
 
-class Announcement(models.Model):
+class Announcement(PolymorphicModel):
     time = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        abstract = True
 
 
 class ForewarnForUser(Announcement):
@@ -49,3 +47,11 @@ class ApplicationForGlobal(Announcement):
 
     class Meta:
         db_table = "global_announcement"
+
+class NormalMessage(Announcement):
+    sender = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithuser') # 发件人
+    receiver = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithadmin') # 收件人
+    message_object = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='user') # 处理对象
+
+    class Meta:
+        db_table = "personal_announcement"

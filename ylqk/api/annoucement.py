@@ -3,6 +3,7 @@ from django.views.decorators.http import require_GET
 from django.db import transaction
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from polymorphic.query import PolymorphicQuerySet
 
 from utils.response_util import *
 from ..models.announcement import *
@@ -18,12 +19,21 @@ def get_admins_all(request:HttpRequest):
 
 @require_GET
 def get_users_all(request:HttpRequest):
-    id = request.GET.get("station_id")
+    id = request.GET.get("user_id")
     mails = ForewarnForUser.objects.filter(user_id=id).filter().all()
     if isinstance(mails,QuerySet) or isinstance(mails,Model):
         return build_success_json_response(mails)
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND,"尚无灾害预警信息")
+
+def get_private_all(request:HttpRequest): #还可以有个已发送？
+    id = request.GET.get("user_id")
+    mails = NormalMessage.objects.filter(receiver_id=id).filter(),all()
+    if isinstance(mails,QuerySet) or isinstance(mails,Model):
+        return build_success_json_response(mails)
+    else:
+        return build_failed_json_response(StatusCode.NOT_FOUND,"尚无灾害预警信息")
+
 
 @require_GET
 def get_system_all(request:HttpRequest):
@@ -32,26 +42,35 @@ def get_system_all(request:HttpRequest):
         return build_success_json_response(mails)
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND, "尚无系统信息")
+## 可以查看
 
-
+@require_GET
 def get_mail_by_id(request:HttpRequest):
-    if request.method == 'GET':
-        id = request.GET.get("id")
-        mail = Announcement.objects.filter(id=id).filter().first()
-        if  isinstance(mail, QuerySet) or isinstance(mail, Model):
-            return build_success_json_response(mail)
+    id = request.GET.get("id")
+    mail = Announcement.objects.instance_of(ForecastForAdmin).filter(id=id).first()
+    if isinstance(mail, QuerySet) or isinstance(mail, Model):
+        return build_success_json_response(mail)
+    else:
+        return build_failed_json_response(StatusCode.NOT_FOUND, "该信息不存在")
+
+
+def tackle_mail_by_id(request:HttpRequest):
+    id = request.POST.get("id")
+    with transaction.atomic():
+        mail = Announcement.objects.instance_of(Announcement).filter(id=id).filter().first()
+        if isinstance(mail, QuerySet) or isinstance(mail, Model):
+            if isinstance(mail, NormalMessage) and request.POST.get("confirm") == "True":  # 同意
+                ob = UserProfile.objects.filter(id=mail.message_object.id)
+                ob.level = '2'
+                ob.save()
+            elif isinstance(mail, ForecastForAdmin) and mail.confirmed == False:  # 尚未被确认
+                mail.confirmed = True
+                if request.POST.get("confirm") == 'True':
+                    publish(mail.disaster.id)
+            return build_success_json_response()
+
         else:
             return build_failed_json_response(StatusCode.NOT_FOUND, "该信息不存在")
-    elif request.method == 'POST':
-        with transaction.atomic():
-            id = request.POST.get("id")
-            mail = ForecastForAdmin.objects.filter(id=id).filter().first()
-            if isinstance(mail, QuerySet) or isinstance(mail, Model): #还未被确认发布
-                if request.POST.get("confirm") == "True": #发布
-                    publish(mail.disaster.id)
-                mail.delete()
-            else:
-                return build_failed_json_response(StatusCode.NOT_FOUND, "该预警已被其他管理员处理")
 
 
 def publish(did):
