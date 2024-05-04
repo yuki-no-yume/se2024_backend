@@ -153,5 +153,5 @@ REST_FRAMEWORK = {
 }
 
 CRONJOBS = [
-    ('0 */3 * * *', 'ylqk.api.meteorological_data._update_meteorological_data', '>> tmp/logs/update.log'),
+    ('0 */3 * * *', 'ylqk.api.meteorological_data._update_meteorological_data', '>> ~/SE2024/se2024_backend/tmp/logs/update.log'),
 ]
