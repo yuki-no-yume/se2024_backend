@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "ylqk",
     'rest_framework',
     'polymorphic',
+    "django_crontab"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -63,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -150,3 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['utils.auth.JwtQueryParamsAuthentication']
 }
+
+CRONJOBS = [
+    ('0 */3 * * *', 'ylqk.api.meteorological_data._update_meteorological_data', '>> tmp/logs/update.log'),
+]
