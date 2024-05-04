@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "ylqk",
     'rest_framework',
     'polymorphic',
-    "django_crontab"
+    "django_crontab",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
