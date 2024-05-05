@@ -9,7 +9,6 @@ from ylqk.models.users import UserProfile
 
 
 class JwtQueryParamsAuthentication(MiddlewareMixin):
-    @staticmethod
     def process_request(self, request):
         excluded_paths = [
             '/admin/',
