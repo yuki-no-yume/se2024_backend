@@ -19,7 +19,7 @@ API = f"http://api.data.cma.cn:8090/api?userId={USER_ID}&pwd={PWD}" \
       "WIN_S_Avg_2mi,WIN_D_Avg_2mi,WIN_S_MAX,WIN_D_S_Max,WIN_S_Inst_Max,WIN_D_INST_Max," \
       "CLO_Cov,CLO_Cov_Low,CLO_COV_LM," \
       "VIS,WEP_Now"
-_lng_cn = npy.linspace(73.67, 135.08, 100)
+_lng_cn = npy.linspace(73.67, 135.08, 174)
 _lat_cn = npy.linspace(18.17, 53.5, 100)
 _lng_cn2d, _lat_cn2d = npy.meshgrid(_lng_cn, _lat_cn)
 
@@ -92,6 +92,7 @@ def _update_meteorological_data():
 def _interp2d(lng_list: list, lat_list: list, value_list: list):
     # 建议对下列几种插值方法进行对比: inverse, linear
     # 单从数值看,似乎inverse更优
+    # 不排除个别数值不合理的情况
     f_interp = interpolate.Rbf(lng_list, lat_list, value_list, function="inverse")
     interp_list = f_interp(_lng_cn2d, _lat_cn2d)
     return interp_list
@@ -184,7 +185,7 @@ def get_interp_temperature_data(request: HttpRequest):
     interp_values = _interp2d(longitude_list, latitude_list, temperature_list)
     response = []
     for i in range(0, len(_lng_cn2d)):
-        for j in range(0, len(_lat_cn2d)):
+        for j in range(0, len(_lng_cn2d[i])):
             meta = {
                 "geometry": {
                     "type": "Point",
