@@ -26,7 +26,7 @@ urlpatterns = [
     path("meteorological/cloud-data/all", get_all_cloud_data),  # 查询所有云量数据
     path("meteorological/other-meteorological-data/all", get_all_other_meteorological_data),    # 查询其他气象数据
     path("meteorological/update", update_meteorological_data_by_admin),  # 管理员手动更新气象数据
-    path("meteorological/temperature-data/interp", get_interp_temperature_data),    # 查询插值后的气温数据
+    path("meteorological/interp", get_interp_meteorological_data),    # 查询插值后的气象数据
 
     # 通知类接口
     path("announcement/admin/disaster", get_admins_all),  # 模型审批通知
