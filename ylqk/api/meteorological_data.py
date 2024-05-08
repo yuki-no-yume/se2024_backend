@@ -246,46 +246,67 @@ def update_meteorological_data_by_admin(request: HttpRequest):
 def get_interp_meteorological_data(request: HttpRequest):
     data_type = request.GET.get("type")
     origin_interp_data = InterpData.objects.all()
-    longitude_list = []
-    latitude_list = []
-    interp_values = []
+    response = []
     if data_type == "temp":
         for elm in origin_interp_data:
-            longitude_list.append(elm.longitude)
-            latitude_list.append(elm.latitude)
-            interp_values.append(elm.temp)
+            meta = {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [elm.longitude, elm.latitude]
+                },
+                "properties": {
+                    "count": elm.temp,
+                }
+            }
+            response.append(meta)
     elif data_type == "prs":
         for elm in origin_interp_data:
-            longitude_list.append(elm.longitude)
-            latitude_list.append(elm.latitude)
-            interp_values.append(elm.prs)
+            meta = {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [elm.longitude, elm.latitude]
+                },
+                "properties": {
+                    "count": elm.prs,
+                }
+            }
+            response.append(meta)
     elif data_type == "rhu":
         for elm in origin_interp_data:
-            longitude_list.append(elm.longitude)
-            latitude_list.append(elm.latitude)
-            interp_values.append(elm.rhu)
+            meta = {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [elm.longitude, elm.latitude]
+                },
+                "properties": {
+                    "count": elm.rhu,
+                }
+            }
+            response.append(meta)
     elif data_type == "pre3h":
         for elm in origin_interp_data:
-            longitude_list.append(elm.longitude)
-            latitude_list.append(elm.latitude)
-            interp_values.append(elm.pre3h)
+            meta = {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [elm.longitude, elm.latitude]
+                },
+                "properties": {
+                    "count": elm.pre3h,
+                }
+            }
+            response.append(meta)
     elif data_type == "wind":
         for elm in origin_interp_data:
-            longitude_list.append(elm.longitude)
-            latitude_list.append(elm.latitude)
-            interp_values.append(elm.wind_s)
+            meta = {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [elm.longitude, elm.latitude]
+                },
+                "properties": {
+                    "count": elm.wind_s,
+                }
+            }
+            response.append(meta)
     else:
         return build_failed_json_response(StatusCode.BAD_REQUEST)
-    response = []
-    for i in range(0, len(longitude_list)):
-        meta = {
-            "geometry": {
-                "type": "Point",
-                "coordinates": [longitude_list[i], latitude_list[i]]
-            },
-            "properties": {
-                "count": interp_values[i],
-            }
-        }
-        response.append(meta)
     return build_success_json_response(response)
