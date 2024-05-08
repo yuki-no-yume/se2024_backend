@@ -1,12 +1,12 @@
-import numpy as np
 import requests
 import numpy as npy
-from scipy import interpolate
 from django.http import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
 from datetime import datetime, timedelta
+from scipy import interpolate
 
 from utils.response_util import *
+from ylqk.models.interp_data import *
 from ylqk.models.meteorological_data import *
 
 USER_ID = "714756904471BoKJR"
@@ -49,10 +49,8 @@ def _update_meteorological_data():
             station_id_list.append(elm.station_id)
         cur_url = basic_url + f"&staIDs={_list2str(station_id_list)}"
         response = requests.get(cur_url)
-        print(response.json())
         data = response.json()["DS"]
         for elm in data:
-            print(elm["STATION_Id_C"])
             datetime_str = str(elm["Datetime"])
             AllMeteorologicalData.objects.filter(Station_Id_C=elm["STATION_Id_C"]).update(
                 Datetime=datetime(
@@ -87,6 +85,9 @@ def _update_meteorological_data():
                 WEP_Now=elm["WEP_Now"]
             )
         index += 30
+    print(f"{datetime.now()} Finished updating origin meteorological data.")
+    _process_meteorological_data()
+    print(f"{datetime.now()} Finished updating interp meteorological data.")
 
 
 def _interp2d(lng_list: list, lat_list: list, value_list: list, func: str = "multiquadric"):
@@ -105,6 +106,69 @@ def _interp2d(lng_list: list, lat_list: list, value_list: list, func: str = "mul
     f_interp = interpolate.Rbf(lng_list, lat_list, value_list, function=func)
     interp_list = f_interp(_lng_cn2d, _lat_cn2d)
     return interp_list
+
+
+def _process_meteorological_data():
+    longitude_list = []
+    latitude_list = []
+    temp_values = []
+    prs_values = []
+    rhu_values = []
+    pre3h_values = []
+    winds_values = []
+    origin_meteorological_data = AllMeteorologicalData.objects.all()
+    for elm in origin_meteorological_data:
+        elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
+    for elm in origin_meteorological_data:
+        longitude_list.append(elm.station_info.longitude)
+        latitude_list.append(elm.station_info.latitude)
+        if elm.TEM == 999999 or elm.TEM == 999998 or elm.TEM == 999990:
+            elm.TEM = 20.0
+        temp_values.append(elm.TEM)
+        if elm.PRS == 999999 or elm.PRS == 999998 or elm.PRS == 999990:
+            elm.PRS = 1000.0
+        prs_values.append(elm.PRS)
+        if elm.RHU == 999999 or elm.RHU == 999998 or elm.RHU == 999990:
+            elm.RHU = 80.0
+        rhu_values.append(elm.RHU)
+        if elm.PRE_3h == 999999 or elm.PRE_3h == 999998 or elm.PRE_3h == 999990:
+            elm.PRE_3h = 0.0
+        pre3h_values.append(elm.PRE_3h)
+        if elm.WIN_S_Avg_2mi == 999999 or elm.WIN_S_Avg_2mi == 999998 or elm.WIN_S_Avg_2mi == 999990:
+            elm.WIN_S_Avg_2mi = 0.0
+        winds_values.append(elm.WIN_S_Avg_2mi)
+
+    interp_temp_values = _interp2d(longitude_list, latitude_list, temp_values, func="inverse")
+    interp_prs_values = _interp2d(longitude_list, latitude_list, prs_values, func="linear")
+    interp_rhu_values = _interp2d(longitude_list, latitude_list, rhu_values, func="inverse")
+    interp_pre3h_values = _interp2d(longitude_list, latitude_list, pre3h_values, func="inverse")
+    interp_winds_values = _interp2d(longitude_list, latitude_list, winds_values, func="inverse")
+
+    for i in range(0, len(_lng_cn2d)):
+        for j in range(0, len(_lng_cn2d[i])):
+            if interp_temp_values[i][j] > 42:
+                interp_temp_values[i][j] = 42.0
+            elif interp_temp_values[i][j] < -20:
+                interp_temp_values[i][j] = -20.0
+            interp_temp_values[i][j] += 60  # 加上偏移
+            if interp_prs_values[i][j] > 1013.25:
+                interp_prs_values[i][j] = 1013.25
+            if interp_rhu_values[i][j] > 100:
+                interp_rhu_values[i][j] = 100.0
+            elif interp_rhu_values[i][j] < 0:
+                interp_rhu_values[i][j] = 0.0
+            if interp_pre3h_values[i][j] < 0.0:
+                interp_pre3h_values[i][j] = 0.0
+            if interp_winds_values[i][j] < 0.0:
+                interp_winds_values[i][j] = 0.0
+            InterpData.objects.filter(longitude=_lng_cn2d[i][j],
+                                      latitude=_lat_cn2d[i][j]).update(
+                temp=interp_temp_values[i][j],
+                prs=interp_prs_values[i][j],
+                rhu=interp_rhu_values[i][j],
+                pre3h=interp_pre3h_values[i][j],
+                wind_s=interp_winds_values[i][j],
+            )
 
 
 @require_GET
@@ -181,95 +245,47 @@ def update_meteorological_data_by_admin(request: HttpRequest):
 @require_GET
 def get_interp_meteorological_data(request: HttpRequest):
     data_type = request.GET.get("type")
+    origin_interp_data = InterpData.objects.all()
     longitude_list = []
     latitude_list = []
-    value_list = []
+    interp_values = []
     if data_type == "temp":
-        origin_temperature_data = TemperatureData.objects.all()
-        for elm in origin_temperature_data:
-            elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
-        for elm in origin_temperature_data:
-            if elm.TEM != 999999 and elm.TEM != 999998 and elm.TEM != 999990:
-                longitude_list.append(elm.station_info.longitude)
-                latitude_list.append(elm.station_info.latitude)
-                value_list.append(elm.TEM)
-        interp_values = _interp2d(longitude_list, latitude_list, value_list, func="inverse")
-        for i in range(0, len(_lng_cn2d)):
-            for j in range(0, len(_lng_cn2d[i])):
-                if interp_values[i][j] > 42:
-                    interp_values[i][j] = 42.0
+        for elm in origin_interp_data:
+            longitude_list.append(elm.longitude)
+            latitude_list.append(elm.latitude)
+            interp_values.append(elm.temp)
     elif data_type == "prs":
-        origin_pressure_data = PressureData.objects.all()
-        for elm in origin_pressure_data:
-            elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
-        for elm in origin_pressure_data:
-            if elm.PRS != 999999 and elm.PRS != 999998 and elm.PRS != 999990:
-                longitude_list.append(elm.station_info.longitude)
-                latitude_list.append(elm.station_info.latitude)
-                value_list.append(elm.PRS)
-        interp_values = _interp2d(longitude_list, latitude_list, value_list, func="linear")
-        for i in range(0, len(_lng_cn2d)):
-            for j in range(0, len(_lng_cn2d[i])):
-                if interp_values[i][j] > 1013.25:
-                    interp_values[i][j] = 1013.25
+        for elm in origin_interp_data:
+            longitude_list.append(elm.longitude)
+            latitude_list.append(elm.latitude)
+            interp_values.append(elm.prs)
     elif data_type == "rhu":
-        origin_humidity_data = HumidityData.objects.all()
-        for elm in origin_humidity_data:
-            elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
-        for elm in origin_humidity_data:
-            if elm.RHU != 999999 and elm.RHU != 999998 and elm.RHU != 999990:
-                longitude_list.append(elm.station_info.longitude)
-                latitude_list.append(elm.station_info.latitude)
-                value_list.append(elm.RHU)
-        interp_values = _interp2d(longitude_list, latitude_list, value_list, func="inverse")
-        for i in range(0, len(_lng_cn2d)):
-            for j in range(0, len(_lng_cn2d[i])):
-                if interp_values[i][j] > 100:
-                    interp_values[i][j] = 100.0
-                elif interp_values[i][j] < 0:
-                    interp_values[i][j] = 0.0
+        for elm in origin_interp_data:
+            longitude_list.append(elm.longitude)
+            latitude_list.append(elm.latitude)
+            interp_values.append(elm.rhu)
     elif data_type == "pre3h":
-        origin_precipitation_data = HumidityData.objects.all()
-        for elm in origin_precipitation_data:
-            elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
-        for elm in origin_precipitation_data:
-            if elm.PRE_3h != 999999 and elm.PRE_3h != 999998 and elm.PRE_3h != 999990:
-                longitude_list.append(elm.station_info.longitude)
-                latitude_list.append(elm.station_info.latitude)
-                value_list.append(elm.PRE_3h)
-        interp_values = _interp2d(longitude_list, latitude_list, value_list, func="inverse")
-        for i in range(0, len(_lng_cn2d)):
-            for j in range(0, len(_lng_cn2d[i])):
-                if interp_values[i][j] < 0.0:
-                    interp_values[i][j] = 0.0
+        for elm in origin_interp_data:
+            longitude_list.append(elm.longitude)
+            latitude_list.append(elm.latitude)
+            interp_values.append(elm.pre3h)
     elif data_type == "wind":
-        origin_wind_data = WindData.objects.all()
-        for elm in origin_wind_data:
-            elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
-        for elm in origin_wind_data:
-            if elm.WIN_S_Avg_2mi != 999999 and elm.WIN_S_Avg_2mi != 999998 and elm.WIN_S_Avg_2mi != 999990:
-                longitude_list.append(elm.station_info.longitude)
-                latitude_list.append(elm.station_info.latitude)
-                value_list.append(elm.WIN_S_Avg_2mi)
-        interp_values = _interp2d(longitude_list, latitude_list, value_list, func="inverse")
-        for i in range(0, len(_lng_cn2d)):
-            for j in range(0, len(_lng_cn2d[i])):
-                if interp_values[i][j] < 0.0:
-                    interp_values[i][j] = 0.0
+        for elm in origin_interp_data:
+            longitude_list.append(elm.longitude)
+            latitude_list.append(elm.latitude)
+            interp_values.append(elm.wind_s)
     else:
         return build_failed_json_response(StatusCode.BAD_REQUEST)
     response = []
-    for i in range(0, len(_lng_cn2d)):
-        for j in range(0, len(_lng_cn2d[i])):
-            meta = {
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [_lng_cn2d[i][j], _lat_cn2d[i][j]]
-                },
-                "properties": {
-                    "count": interp_values[i][j],
-                }
+    for i in range(0, len(longitude_list)):
+        meta = {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [longitude_list[i], latitude_list[i]]
+            },
+            "properties": {
+                "count": interp_values[i],
             }
-            response.append(meta)
-            print(f"longitude = {_lng_cn2d[i][j]}, latitude = {_lat_cn2d[i][j]}, interp = {interp_values[i][j]}")
+        }
+        response.append(meta)
     return build_success_json_response(response)
