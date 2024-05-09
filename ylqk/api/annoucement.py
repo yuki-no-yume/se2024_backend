@@ -93,7 +93,6 @@ def getSurroundings(loc):
         unit = item.city
         tmp = unit.split("-")
         min_unit = [part.strip() for part in tmp if part.strip()][-1]
-        # print(min_unit,min_loc)
         if min_loc in unit or min_unit in loc:
             users.append(item.user)
     return users
