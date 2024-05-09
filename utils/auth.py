@@ -12,6 +12,7 @@ class JwtQueryParamsAuthentication(MiddlewareMixin):
     def process_request(self, request):
         excluded_paths = [
             '/admin/',
+            # '/ylqk'
             '/ylqk/login',
             '/ylqk/register',
         ]

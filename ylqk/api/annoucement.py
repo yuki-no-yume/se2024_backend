@@ -55,17 +55,18 @@ def get_mail_by_id(request:HttpRequest):
 
 
 def tackle_mail_by_id(request:HttpRequest):
-    id = request.POST.get("id")
+    body = json.loads(request.body)
+    id = body.get("id")
     with transaction.atomic():
         mail = Announcement.objects.instance_of(Announcement).filter(id=id).filter().first()
         if isinstance(mail, QuerySet) or isinstance(mail, Model):
-            if isinstance(mail, NormalMessage) and request.POST.get("confirm") == "True":  # 同意
+            if isinstance(mail, NormalMessage) and body.get("confirm") == "True":  # 同意
                 ob = UserProfile.objects.filter(id=mail.message_object.id)
                 ob.level = '2'
                 ob.save()
             elif isinstance(mail, ForecastForAdmin) and mail.confirmed == False:  # 尚未被确认
                 mail.confirmed = True
-                if request.POST.get("confirm") == 'True':
+                if body.get("confirm") == 'True':
                     publish(mail.disaster.id)
             return build_success_json_response()
 
@@ -76,16 +77,26 @@ def tackle_mail_by_id(request:HttpRequest):
 def publish(did):
     disaster = AIDisasterForecast.objects.filter(id=did).first()
     if isinstance(disaster, QuerySet) or isinstance(disaster, Model):
-        cities = getSurroundings(disaster.disaster_latitude,disaster.disaster_longitude)
-        users = Subscribed.objects.filter(city__in=cities)
+        users = getSurroundings(disaster.disaster_location)
         for user in users:
             userMes = ForewarnForUser(disaster_id=did,user_id=user.id)
             userMes.save()
 
-# 返回通知城市列表
-def getSurroundings(la,long):
-    cities = []
-    return cities
+# 最长匹配
+def getSurroundings(loc):
+    users = []
+
+    locs = loc.split("-")
+    min_loc = [unit.strip() for unit in locs if unit.strip()][-1]
+    subscribes = Subscribed.objects.all()
+    for item in subscribes:
+        unit = item.city
+        tmp = unit.split("-")
+        min_unit = [part.strip() for part in tmp if part.strip()][-1]
+        # print(min_unit,min_loc)
+        if min_loc in unit or min_unit in loc:
+            users.append(item.user)
+    return users
 
 #
 #

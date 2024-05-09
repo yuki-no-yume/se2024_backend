@@ -4,44 +4,50 @@ from django.views.decorators.http import require_GET
 from utils.response_util import *
 from ..models.users import *
 from ..models.announcement import *
-from ..api.annoucement import publish,getSurroundings
+from ..api.annoucement import publish, getSurroundings
 
-def create_forewarn(request:HttpRequest):
-    disaster = AIDisasterForecast.objects.create()
 
-    if request.POST.get("type"):
-        disaster.disaster_type = request.POST.get("type")
-    if request.POST.get("level"):
-        disaster.disaster_level = request.POST.get("level")
-    if request.POST.get("location"):
-        disaster.disaster_location = request.POST.get("location")
-    if request.POST.get("longitude"):
-        disaster.disaster_longitude = request.POST.get("longitude")
-    if request.POST.get("latitude"):
-        disaster.disaster_latitude = request.POST.get("latitude")
+def admin_create_forewarn(request: HttpRequest):
+    disaster = AIDisasterForecast.objects.create(disaster_type="-1", disaster_level=-1,
+                                                 disaster_location="-1", disaster_longitude=-1, disaster_latitude=-1)
+    body = json.loads(request.body)
+    if body.get("type"):
+        disaster.disaster_type = body.get("type")
+    if body.get("level"):
+        disaster.disaster_level = body.get("level")
+    if body.get("location"):
+        disaster.disaster_location = body.get("location")
+    if body.get("longitude"):
+        disaster.disaster_longitude = body.get("longitude")
+    if body.get("latitude"):
+        disaster.disaster_latitude = body.get("latitude")
     disaster.save()
-    ForecastForAdmin.objects.create(disaster_id=disaster.id,confirmed=True)
+    ForecastForAdmin.objects.create(disaster_id=disaster.id, confirmed=True)
     publish(disaster.id)
-    return build_success_json_response()
+    resp_body = {"status_code": StatusCode.OK.value}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
-def modify_forewarn(request:HttpRequest):
-    fid = request.POST.get("forewarn_id")
-    did = ForewarnForUser.objects.filter(id=fid).first().disaster_id
 
-    if request.POST.get("expire") == "True":
-        ForewarnForUser.objects.filter(disaster_id=did).delete()
+def admin_modify_forewarn(request: HttpRequest):
+    body = json.loads(request.body)
+    fid = body.get("forecast_id") #
+    did = ForecastForAdmin.objects.filter(id=fid).first().disaster_id
+
+
+    if body.get("expire") == "True":
+        AIDisasterForecast.objects.filter(id=did).delete()
         return build_success_json_response()
     disaster = AIDisasterForecast.objects.filter(disaster_id=did)
-    if request.POST.get("type"):
-        disaster.disaster_type = request.POST.get("type")
-    if request.POST.get("level"):
-        disaster.disaster_level = request.POST.get("level")
-    if request.POST.get("location"):
-        disaster.disaster_location = request.POST.get("location")
-    if request.POST.get("longitude"):
-        disaster.disaster_longitude = request.POST.get("longitude")
-    if request.POST.get("latitude"):
-        disaster.disaster_latitude = request.POST.get("latitude")
+    if body.get("type"):
+        disaster.disaster_type = body.get("type")
+    if body.get("level"):
+        disaster.disaster_level = body.get("level")
+    if body.get("location"):
+        disaster.disaster_location = body.get("location")
+    if body.get("longitude"):
+        disaster.disaster_longitude = body.get("longitude")
+    if body.get("latitude"):
+        disaster.disaster_latitude = body.get("latitude")
     disaster.save()
-    return build_success_json_response()
-
+    resp_body = {"status_code": StatusCode.OK.value}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
