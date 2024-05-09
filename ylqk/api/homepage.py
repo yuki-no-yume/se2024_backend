@@ -35,6 +35,7 @@ def submit_more_info(request:HttpRequest): #选定管理员并申请
             return build_success_json_response()
         return build_failed_json_response(StatusCode.BAD_REQUEST,"人员id错误")
 
+@require_GET
 def get_all_published_disasters(request:HttpRequest):
     forecasts = ForecastForAdmin.objects.filter(confirmed=True).all()
     ids = forecasts.values_list('disaster_id', flat=True)
@@ -44,7 +45,28 @@ def get_all_published_disasters(request:HttpRequest):
     else:
         return build_failed_json_response(StatusCode.NOT_FOUND, "尚无灾害预警")
 
+def add_subscribe_city(request:HttpRequest):
+    request_body = json.loads(request.body)
+    uid = request_body.get("user_id")
+    city = request_body.get("city")
+    existing_subscription = Subscribed.objects.filter(user_id=uid, city=city).first()
+    if existing_subscription:
+        return build_failed_json_response(StatusCode.CONFLICT,"该订阅已经存在")
+    subscribe_info = Subscribed.objects.create(user_id=uid,city=city)
+    subscribe_info.save()
+    resp_body = {"status_code": StatusCode.OK.value}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
+def del_subscribe_city(request:HttpRequest):
+    request_body = json.loads(request.body)
+    uid = request_body.get("user_id")
+    city = request_body.get("city")
+    try:
+        Subscribed.objects.filter(user_id=uid,city=city).delete()
+    except Exception as e:
+        build_failed_json_response(StatusCode.BAD_REQUEST,"failed to delete")
+    resp_body = {"status_code": StatusCode.OK.value}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
 
 

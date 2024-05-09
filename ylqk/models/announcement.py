@@ -3,7 +3,7 @@ from polymorphic.models import PolymorphicModel
 
 # 模型输出还没确定
 class AIDisasterForecast(models.Model):
-    datatime = models.DateTimeField()
+    datatime = models.DateTimeField(auto_now_add=True)
     disaster_type = models.CharField(max_length=10)
     disaster_level = models.IntegerField()
     disaster_location = models.CharField(max_length=20)
@@ -43,15 +43,15 @@ class ForecastForAdmin(Announcement):
 
 
 class ApplicationForGlobal(Announcement):
-    content = models.CharField(max_length=300)
+    content = models.CharField(max_length=300,default="")
 
     class Meta:
         db_table = "global_announcement"
-
-class NormalMessage(Announcement):
-    sender = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithuser') # 发件人
-    receiver = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithadmin') # 收件人
-    message_object = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='user') # 处理对象
-
-    class Meta:
-        db_table = "personal_announcement"
+#
+# class NormalMessage(Announcement):
+#     sender = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithuser') # 发件人
+#     receiver = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithadmin') # 收件人
+#     message_object = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='user') # 处理对象
+#
+#     class Meta:
+#         db_table = "personal_announcement"

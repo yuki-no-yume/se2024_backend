@@ -32,7 +32,8 @@ class Login(APIView):
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
         }
         token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
-        resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": {'token':token}}
+        id = user_object.id
+        resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": {'token':token,'user_id':id}}
         return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
 
