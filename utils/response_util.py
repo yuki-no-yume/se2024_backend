@@ -24,13 +24,15 @@ class StatusCode(Enum):
     INTERNAL_SERVER_ERROR = 500
 
 
-def build_success_json_response(result: QuerySet | Model, message: string = "SUCCESS"):
+def build_success_json_response(result: QuerySet | Model = None, message: string = "SUCCESS"):
     if isinstance(result, QuerySet):
         data = []
         for elm in result:
             data.append(elm.to_dict())
-    else:
+    elif isinstance(result, Model):
         data = result.to_dict()
+    else:
+        data = result
     resp_body = {"status_code": StatusCode.OK.value, "message": message, "data": data}
     return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 

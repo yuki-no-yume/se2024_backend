@@ -7,8 +7,8 @@ import jwt
 from .response_util import *
 from ylqk.models.users import UserProfile
 
-class JwtQueryParamsAuthentication(MiddlewareMixin):
 
+class JwtQueryParamsAuthentication(MiddlewareMixin):
     def process_request(self, request):
         excluded_paths = [
             '/admin/',
