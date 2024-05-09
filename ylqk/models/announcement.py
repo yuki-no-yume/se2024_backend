@@ -12,7 +12,7 @@ class AIDisasterForecast(models.Model):
 
     def to_dict(self):
         return {
-            "datatime": self.datatime,
+            "datatime": str(self.datatime),
             "disaster_type": self.disaster_type,
             "disaster_level": self.disaster_level,
             "disaster_location": self.disaster_location,
@@ -33,6 +33,13 @@ class ForewarnForUser(Announcement):
     class Meta:
         db_table = "user_announcements"
 
+    def to_dict(self):
+        return {
+            "time":str(self.time),
+            "disaster":self.disaster.to_dict(),
+            "user":self.user.to_dict(),
+        }
+
 
 class ForecastForAdmin(Announcement):
     disaster = models.ForeignKey(to='AIDisasterForecast', to_field='id', on_delete=models.CASCADE)
@@ -41,12 +48,25 @@ class ForecastForAdmin(Announcement):
     class Meta:
         db_table = "admin_announcements"
 
+    def to_dict(self):
+        return {
+            "time":str(self.time),
+            "disaster":self.disaster.to_dict(),
+            "confirmed":self.confirmed,
+        }
+
 
 class ApplicationForGlobal(Announcement):
     content = models.CharField(max_length=300,default="")
 
     class Meta:
         db_table = "global_announcement"
+
+    def to_dict(self):
+        return {
+            "time":str(self.time),
+            "content":self.content,
+        }
 #
 # class NormalMessage(Announcement):
 #     sender = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithuser') # 发件人
