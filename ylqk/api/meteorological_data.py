@@ -173,18 +173,48 @@ def _process_meteorological_data():
 
 @require_GET
 def get_station_info(request: HttpRequest):
-    station_id = request.GET.get("station_id")
-    station = StationInfo.objects.filter(station_id=station_id).first()
-    if isinstance(station, QuerySet) or isinstance(station, Model):
-        return build_success_json_response(station)
-    else:
-        return build_failed_json_response(StatusCode.NOT_FOUND, "站点id不存在")
+    response = []
+    station_id_list = request.GET.getlist("id")
+    for station_id in station_id_list:
+        station = StationInfo.objects.filter(station_id=int(station_id)).first()
+        if station is not None:
+            response.append(station)
+    return build_success_json_response(response)
 
 
 @require_GET
 def get_all_station_info(request: HttpRequest):
     stations = StationInfo.objects.all()
     return build_success_json_response(stations)
+
+
+@require_GET
+def get_origin_meteorological_data(request: HttpRequest):
+    import time
+    t0 = time.time()
+    data_type = request.GET.get("type")
+    response: QuerySet
+    if data_type == "all":
+        response = AllMeteorologicalData.objects.all()
+    elif data_type == "temp":
+        response = TemperatureData.objects.all()
+    elif data_type == "prs":
+        response = PressureData.objects.all()
+    elif data_type == "hum":
+        response = HumidityData.objects.all()
+    elif data_type == "wind":
+        response = WindData.objects.all()
+    elif data_type == "cloud":
+        response = CloudData.objects.all()
+    elif data_type == "other":
+        response = OtherMeteorologicalData.objects.all()
+    else:
+        return build_failed_json_response(StatusCode.BAD_REQUEST)
+    print(time.time() - t0)
+    for elm in response:
+        elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
+    print(time.time() - t0)
+    return build_success_json_response(response)
 
 
 @require_GET

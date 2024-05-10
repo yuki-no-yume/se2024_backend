@@ -24,8 +24,8 @@ class StatusCode(Enum):
     INTERNAL_SERVER_ERROR = 500
 
 
-def build_success_json_response(result: QuerySet | Model = None, message: string = "SUCCESS"):
-    if isinstance(result, QuerySet):
+def build_success_json_response(result: QuerySet | Model | list = None, message: string = "SUCCESS"):
+    if isinstance(result, (QuerySet, list)):
         data = []
         for elm in result:
             data.append(elm.to_dict())
