@@ -8,13 +8,18 @@ from ylqk.api.annoucement import *
 from ylqk.api.login import *
 from ylqk.api.homepage import *
 from ylqk.api.sub_admin import *
+from utils.auth import TokenRefresh
 
 from django.contrib import admin
 
 urlpatterns = [
     # 用户登录
-    path('login', Login.as_view()),
-    path('register', Register.as_view()),
+    path('login',Login.as_view()),
+    path('register',Register.as_view()),
+    path('retrieve',Retrieve.as_view()),
+    path('reset/username',reset_username),
+    path('reset/password',reset_password),
+    path('refresh',TokenRefresh),
 
     # 气象数据查询接口
     path("meteorological/station-info", get_station_info),  # 查询所有气象站点信息
@@ -47,6 +52,7 @@ urlpatterns = [
     # 管理员功能
     # path('sub-admin/ban',), # 禁言用户
     # path('sub-admin/unban',), # 取消用户禁言
+
     path('sub-admin/manual', admin_create_forewarn),  # 手动创建灾害预警
     path('sub-admin/modify', admin_modify_forewarn),  # 修改灾害预警
 ]
