@@ -14,11 +14,11 @@ from ylqk.models.users import UserProfile
 class JwtQueryParamsAuthentication(MiddlewareMixin):
     def process_request(self, request):
         excluded_paths = [
-            '/admin/',
-            # '/ylqk'
+            '/admin',
             '/ylqk/login',
             '/ylqk/register',
             '/ylqk/retrieve',
+            # '/ylqk',
         ]
         if any(request.path.startswith(path) for path in excluded_paths):
             return

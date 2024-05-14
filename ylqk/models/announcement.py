@@ -68,7 +68,6 @@ class ApplicationForGlobal(Announcement):
             "content":self.content,
         }
 
-
 #
 # class NormalMessage(Announcement):
 #     sender = models.ForeignKey(to='UserProfile',to_field='id',on_delete=models.CASCADE,related_name='beginwithuser') # 发件人

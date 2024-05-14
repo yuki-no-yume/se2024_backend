@@ -28,10 +28,45 @@ class AllMeteorologicalData(models.Model):
     CLO_COV_LM = models.IntegerField()
     WEP_Now = models.FloatField()
     VIS = models.FloatField()
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
         managed = False
+
+    def to_dict(self):
+        return {
+            "station_info": self.station_info.to_dict(),
+            "datetime": str(self.Datetime),
+
+            "temperature": self.TEM,
+            "temperature_max": self.TEM_MAX,
+            "temperature_min": self.TEM_MIN,
+
+            "pressure": self.PRS,
+            "pressure_sea": self.PRS_Sea,
+            "pressure_max": self.PRS_Max,
+            "pressure_min": self.PRS_Min,
+
+            "relative_humidity": self.RHU,
+            "relative_humidity_min": self.RHU_Min,
+            "vapor_pressure": self.VAP,
+            "precipitation_in_3h": self.PRE_3h,
+
+            "wind_speed_average_in_2min": self.WIN_S_Avg_2mi,
+            "wind_direction_average_in_2min": self.WIN_D_Avg_2mi,
+            "wind_speed_max": self.WIN_S_MAX,
+            "wind_direction_of_speed_max": self.WIN_D_S_Max,
+            "wind_speed_of_instant_max": self.WIN_S_Inst_Max,
+            "wind_direction_of_instant_max": self.WIN_D_INST_Max,
+
+            "cloud_cover_total": self.CLO_Cov,
+            "cloud_cover_low": self.CLO_Cov_Low,
+            "cloud_cover_low_and_mid": self.CLO_COV_LM,
+
+            "current_weather": self.WEP_Now,
+            "visibility": self.VIS,
+        }
 
 
 class PressureData(models.Model):
@@ -41,7 +76,7 @@ class PressureData(models.Model):
     PRS_Sea = models.FloatField()
     PRS_Max = models.FloatField()
     PRS_Min = models.FloatField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
@@ -64,7 +99,7 @@ class TemperatureData(models.Model):
     TEM = models.FloatField()
     TEM_MAX = models.FloatField()
     TEM_MIN = models.FloatField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
@@ -87,7 +122,7 @@ class HumidityData(models.Model):
     RHU_Min = models.IntegerField()
     VAP = models.FloatField()
     PRE_3h = models.FloatField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
@@ -113,7 +148,7 @@ class WindData(models.Model):
     WIN_D_S_Max = models.IntegerField()
     WIN_S_Inst_Max = models.FloatField()
     WIN_D_INST_Max = models.IntegerField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
@@ -138,7 +173,7 @@ class CloudData(models.Model):
     CLO_Cov = models.IntegerField()
     CLO_Cov_Low = models.IntegerField()
     CLO_COV_LM = models.IntegerField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
@@ -159,7 +194,7 @@ class OtherMeteorologicalData(models.Model):
     Datetime = models.DateTimeField()
     WEP_Now = models.FloatField()
     VIS = models.FloatField()
-    station_info: StationInfo = None
+    station_info: StationInfo
 
     class Meta:
         db_table = "current_meteorological_data"
