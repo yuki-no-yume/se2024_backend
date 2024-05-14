@@ -68,5 +68,32 @@ def del_subscribe_city(request:HttpRequest):
     resp_body = {"status_code": StatusCode.OK.value}
     return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
 
+def reset_password(request:HttpRequest):
+    request_body = json.loads(request.body)
+    uid = request_body.get("user_id")
+    pwd = request_body.get('new_password')
+    try:
+        user = UserProfile.objects.filter(id=uid).first()
+        user.password=pwd
+        user.save()
+    except Exception as e:
+        build_failed_json_response(StatusCode.BAD_REQUEST,"用户id错误")
+    return build_success_json_response()
+
+def reset_username(request:HttpRequest):
+    request_body = json.loads(request.body)
+    uid = request_body.get("user_id")
+    name = request_body.get('new_name')
+    try:
+        user = UserProfile.objects.filter(id=uid).first()
+        user.username = name
+        user.save()
+    except Exception as e:
+        build_failed_json_response(StatusCode.BAD_REQUEST, "用户id错误")
+    return build_success_json_response()
+
+def delete_test(request:HttpRequest):
+    UserProfile.objects.filter().delete()
+    return build_success_json_response()
 
 

@@ -155,3 +155,20 @@ REST_FRAMEWORK = {
 CRONJOBS = [
     ('0 */3 * * *', 'ylqk.api.meteorological_data._update_meteorological_data', '>> ~/SE2024/se2024_backend/tmp/logs/update.log'),
 ]
+
+# 发送邮箱验证码
+EMAIL_HOST = "smtp.qq.com"  # 服务器
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "1055758552@qq.com"
+EMAIL_HOST_PASSWORD = "nbyyffzfpsaibcbh"
+EMAIL_USE_TLS = False
+EMAIL_FROM = "1055758552@qq.com"
+email_title = '邮箱激活'
+
+# # 异步进程
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # 使用Redis作为broker
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # 存储结果也使用Redis
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'UTC'
