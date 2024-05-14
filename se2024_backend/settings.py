@@ -157,12 +157,12 @@ CRONJOBS = [
 ]
 
 # 发送邮箱验证码
-EMAIL_HOST = "smtp.qq.com"  # 服务器
+EMAIL_HOST = "smtp.163.com"  # 服务器
 EMAIL_PORT = 25
-EMAIL_HOST_USER = "1055758552@qq.com"
-EMAIL_HOST_PASSWORD = "nbyyffzfpsaibcbh"
+EMAIL_HOST_USER = "se2024_ylqk@163.com"
+EMAIL_HOST_PASSWORD = "NXPUXEXJNCBQPLHN"
 EMAIL_USE_TLS = False
-EMAIL_FROM = "1055758552@qq.com"
+EMAIL_FROM = "se2024_ylqk@163.com"
 email_title = '邮箱激活'
 
 # # 异步进程
