@@ -35,24 +35,17 @@ urlpatterns = [
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
 
     # 通知类接口
-    path("announcement/admin/disaster", get_admins_all),  # 模型审批通知
-    path("announcement/user/suscribed", get_users_all),  # 订阅灾害通知
-    # path("announcement/admin/user",get_private_all),  # 管理员身份审批通知
-    path("announcement/system", get_system_all),  # 系统通知
-    path("announcement/id", get_mail_by_id),  # 通过id获取通知
-    # path('announcement/id/admin',tackle_mail_by_id), # 管理员通过id审批通知
+    path('announcement/unread-number',get_unread_number), # 获取未读通知数量
+    path('announcement/list',get_all_mails), # 获取所有通知
+    path("announcement/id", get_mail_by_id),  # 通过id获取通知详情
+    path('announcement/id/admin',tackle_mail_by_id), # 审核和发布管理员间的通信
+
+    # 管理员功能
+    path('sub-admin/manual', admin_create_forewarn),  # 手动创建灾害预警
 
     # 首页其他功能
     path('subscribe-list', get_subscriced_all),  # 获取订阅列表
-    # path('upgrade',submit_more_info), # 申请成为管理员
     path('disasters', get_all_published_disasters),
     path('subscribe', add_subscribe_city),
     path('undo-subscribe', del_subscribe_city),
-
-    # 管理员功能
-    # path('sub-admin/ban',), # 禁言用户
-    # path('sub-admin/unban',), # 取消用户禁言
-
-    path('sub-admin/manual', admin_create_forewarn),  # 手动创建灾害预警
-    path('sub-admin/modify', admin_modify_forewarn),  # 修改灾害预警
 ]
