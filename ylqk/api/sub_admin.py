@@ -11,6 +11,7 @@ def admin_create_forewarn(request: HttpRequest):
     disaster = AIDisasterForecast.objects.create(disaster_type="-1", disaster_level=-1,
                                                  disaster_location="-1", disaster_longitude=-1, disaster_latitude=-1)
     body = json.loads(request.body)
+    aid = body.get("user_id")
     if body.get("type"):
         disaster.disaster_type = body.get("type")
     if body.get("level"):
@@ -21,33 +22,15 @@ def admin_create_forewarn(request: HttpRequest):
         disaster.disaster_longitude = body.get("longitude")
     if body.get("latitude"):
         disaster.disaster_latitude = body.get("latitude")
+    if body.get("description"):
+        disaster.disaster_description = body.get("description")
     disaster.save()
-    ForecastForAdmin.objects.create(disaster_id=disaster.id, confirmed=True)
-    publish(disaster.id)
-    resp_body = {"status_code": StatusCode.OK.value}
-    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
+    # 给审核的发一条消息
+    auditor = UserProfile.objects.filter(level='3').first()
 
-
-def admin_modify_forewarn(request: HttpRequest):
-    body = json.loads(request.body)
-    fid = body.get("forecast_id") #
-    did = ForecastForAdmin.objects.filter(id=fid).first().disaster_id
-
-
-    if body.get("expire") == "True":
-        AIDisasterForecast.objects.filter(id=did).delete()
-        return build_success_json_response()
-    disaster = AIDisasterForecast.objects.filter(disaster_id=did)
-    if body.get("type"):
-        disaster.disaster_type = body.get("type")
-    if body.get("level"):
-        disaster.disaster_level = body.get("level")
-    if body.get("location"):
-        disaster.disaster_location = body.get("location")
-    if body.get("longitude"):
-        disaster.disaster_longitude = body.get("longitude")
-    if body.get("latitude"):
-        disaster.disaster_latitude = body.get("latitude")
-    disaster.save()
+    mes = ForecastForAdmin.objects.create(status='1',send_id=aid,rec_id=auditor.id,disaster_id=disaster.id)
+    if body.get("remark"):
+        mes.remark = body.get("remark")
+    mes.save()
     resp_body = {"status_code": StatusCode.OK.value}
     return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")

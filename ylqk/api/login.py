@@ -35,7 +35,7 @@ class Login(APIView):
         payload = {
             'user_id': user_object.id,
             'username': user_object.username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=900)
         }
         result = user_object.to_dict()
         access_token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
