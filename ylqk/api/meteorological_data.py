@@ -5,23 +5,36 @@ from django.views.decorators.http import require_GET, require_POST
 from datetime import datetime, timedelta
 from scipy import interpolate
 
+from utils.api_key import *
 from utils.response_util import *
 from ylqk.models.interp_data import *
 from ylqk.models.meteorological_data import *
 
-USER_ID = "714756904471BoKJR"
-PWD = "AhKNgEJ"
-API = f"http://api.data.cma.cn:8090/api?userId={USER_ID}&pwd={PWD}" \
-      "&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H" \
-      "&elements=STATION_Id_C,Datetime,PRS,PRS_Sea,PRS_Max,PRS_Min," \
-      "TEM,TEM_MAX,TEM_MIN," \
-      "RHU,RHU_Min,VAP,PRE_3h," \
-      "WIN_S_Avg_2mi,WIN_D_Avg_2mi,WIN_S_MAX,WIN_D_S_Max,WIN_S_Inst_Max,WIN_D_INST_Max," \
-      "CLO_Cov,CLO_Cov_Low,CLO_COV_LM," \
-      "VIS,WEP_Now"
+element_params = {
+    "prs": "PRS",
+    "prs_sea": "PRS_Sea",
+    "prs_max": "PRS_Max",
+    "prs_min": "PRS_Min",
+    "temp": "TEM",
+    "temp_max": "TEM_MAX",
+    "temp_min": "TEM_MIN",
+    "rhu": "RHU",
+    "rhu_min": "RHU_Min",
+    "vap": "VAP",
+    "pre_sum": "PRE_3h",
+    "wind_sp_max": "WIN_S_MAX",
+    "wind_inst_sp_max": "WIN_S_Inst_Max",
+    "clo_cov": "CLO_Cov",
+    "clo_cov_low": "CLO_Cov_Low",
+}
+
 _lng_cn = npy.linspace(73.67, 135.08, 174)
 _lat_cn = npy.linspace(18.17, 53.5, 100)
 _lng_cn2d, _lat_cn2d = npy.meshgrid(_lng_cn, _lat_cn)
+
+
+def _valid(value: int | float) -> bool:
+    return value != 999999 and value != 999998 and value != 999990
 
 
 def _list2str(lst: list) -> str:
@@ -39,7 +52,7 @@ def _update_meteorological_data():
     # &timeRange=[20240404110000,20240411110000]&staIDs=54433,54399
     hours_delta = 3 if datetime.utcnow().hour % 3 == 0 else int(datetime.utcnow().hour % 3)
     update_time = (datetime.utcnow() - timedelta(hours=hours_delta)).strftime("%Y%m%d%H0000")
-    basic_url = API + f"&timeRange=[{update_time},{update_time}]"
+    basic_url = BASIC_API + ALL_ELEMENTS + f"&timeRange=[{update_time},{update_time}]"
     stations = StationInfo.objects.all()
     index = 0
     while index < len(stations):
@@ -122,19 +135,19 @@ def _process_meteorological_data():
     for elm in origin_meteorological_data:
         longitude_list.append(elm.station_info.longitude)
         latitude_list.append(elm.station_info.latitude)
-        if elm.TEM == 999999 or elm.TEM == 999998 or elm.TEM == 999990:
+        if not _valid(elm.TEM):
             elm.TEM = 20.0
         temp_values.append(elm.TEM)
-        if elm.PRS == 999999 or elm.PRS == 999998 or elm.PRS == 999990:
+        if not _valid(elm.PRS):
             elm.PRS = 1000.0
         prs_values.append(elm.PRS)
-        if elm.RHU == 999999 or elm.RHU == 999998 or elm.RHU == 999990:
+        if not _valid(elm.RHU):
             elm.RHU = 80.0
         rhu_values.append(elm.RHU)
-        if elm.PRE_3h == 999999 or elm.PRE_3h == 999998 or elm.PRE_3h == 999990:
+        if not _valid(elm.PRE_3h):
             elm.PRE_3h = 0.0
         pre3h_values.append(elm.PRE_3h)
-        if elm.WIN_S_Avg_2mi == 999999 or elm.WIN_S_Avg_2mi == 999998 or elm.WIN_S_Avg_2mi == 999990:
+        if not _valid(elm.WIN_S_Avg_2mi):
             elm.WIN_S_Avg_2mi = 0.0
         winds_values.append(elm.WIN_S_Avg_2mi)
 
@@ -340,3 +353,44 @@ def get_interp_meteorological_data(request: HttpRequest):
     else:
         return build_failed_json_response(StatusCode.BAD_REQUEST)
     return build_success_json_response(response)
+
+
+@require_GET
+def get_history_meteorological_data(request: HttpRequest):
+    station_id = request.GET.get("station_id")
+    data_type = request.GET.get("data_type")
+    if data_type not in element_params.keys():
+        return build_failed_json_response(status_code=StatusCode.BAD_REQUEST)
+    from_time = (datetime.utcnow() - timedelta(days=7)).strftime("%Y%m%d000000")
+    to_time = datetime.utcnow().strftime("%Y%m%d000000")
+    url = BASIC_API + f"&staIDs={station_id}&timeRange=[{from_time},{to_time}]" \
+                      f"&elements=Datetime,{element_params[data_type]}"
+    data = requests.get(url).json()["DS"]
+
+    flag_date = from_time[0:8]
+    cnt = 0
+    value = 0
+    dates = []
+    values = []
+    for elm in data:
+        cur_date = elm["Datetime"][0:8]
+        if cur_date == flag_date:
+            if _valid(float(elm[element_params[data_type]])):
+                value += float(elm[element_params[data_type]])
+                cnt += 1
+        else:
+            dates.append(flag_date)
+            if data_type == "pre_sum":
+                values.append(value)
+            else:
+                values.append(value / cnt if cnt != 0 else 0)
+            flag_date = cur_date
+            cnt = 0
+            value = 0
+    result = []
+    for i in range(0, len(dates)):
+        result.append({
+            "date": dates[i],
+            "value": values[i],
+        })
+    return build_success_json_response(result)

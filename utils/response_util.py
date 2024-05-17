@@ -25,7 +25,7 @@ class StatusCode(Enum):
 
 
 def build_success_json_response(result: QuerySet | Model | list = None, message: string = "SUCCESS"):
-    if isinstance(result, (QuerySet, list)):
+    if isinstance(result, QuerySet):
         data = []
         for elm in result:
             data.append(elm.to_dict())

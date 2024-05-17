@@ -33,6 +33,7 @@ urlpatterns = [
     path("meteorological/other-meteorological-data/all", get_all_other_meteorological_data),  # 查询站点其他气象数据
     path("meteorological/update", update_meteorological_data_by_admin),  # 更新站点气象数据
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
+    path("meteorological/history", get_history_meteorological_data),    # 查询历史气象数据
 
     # 通知类接口
     path('announcement/unread-number',get_unread_number), # 获取未读通知数量
