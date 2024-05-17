@@ -10,7 +10,8 @@ class AIDisasterForecast(models.Model):
     disaster_location = models.CharField(max_length=20)
     disaster_longitude = models.FloatField()
     disaster_latitude = models.FloatField()
-    disaster_description = models.CharField(max_length=200, default="")
+    disaster_description = models.CharField(max_length=500, default="")
+    alarm_id = models.CharField(max_length=100,null=True,blank=True)
 
     class Meta:
         db_table = "AIDisasterForecast"

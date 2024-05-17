@@ -39,6 +39,7 @@ urlpatterns = [
     path('announcement/list',get_all_mails), # 获取所有通知
     path("announcement/id", get_mail_by_id),  # 通过id获取通知详情
     path('announcement/id/admin',tackle_mail_by_id), # 审核和发布管理员间的通信
+    path('announcement/update',get_forecast_from_api),
 
     # 管理员功能
     path('sub-admin/manual', admin_create_forewarn),  # 手动创建灾害预警

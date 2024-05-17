@@ -24,6 +24,8 @@ def admin_create_forewarn(request: HttpRequest):
         disaster.disaster_latitude = body.get("latitude")
     if body.get("description"):
         disaster.disaster_description = body.get("description")
+    if body.get('pub_time'):
+        disaster.datatime = datetime.strptime(body.get('pub_time'),'%Y%m%d%H%M%S')
     disaster.save()
     # 给审核的发一条消息
     auditor = UserProfile.objects.filter(level='3').first()
@@ -32,5 +34,5 @@ def admin_create_forewarn(request: HttpRequest):
     if body.get("remark"):
         mes.remark = body.get("remark")
     mes.save()
-    resp_body = {"status_code": StatusCode.OK.value}
+    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS'}
     return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
