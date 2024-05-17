@@ -6,6 +6,7 @@ from django.db import transaction
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from polymorphic.query import PolymorphicQuerySet
+from utils.api import *
 
 from utils.response_util import *
 from ..models.announcement import *
@@ -17,12 +18,14 @@ def get_unread_number(request: HttpRequest):
     id = request.GET.get("user_id")
     user = UserProfile.objects.filter(id=id).first()
     forewarn = ForewarnForUser.objects.filter(user_id=id,read=False).all()  # 订阅信息
-    sysinfo = ApplicationForGlobal.objects.filter(read=False)
+    sysinfo = ApplicationForGlobal.objects.filter(read=False).all()
     admincorres = None
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id,read=False).all()
-
-    size = len(forewarn) + len(sysinfo) + len(admincorres)
+    size1 = len(forewarn) if forewarn else 0
+    size2 = len(sysinfo) if sysinfo else 0
+    size3 = len(admincorres) if admincorres else 0
+    size = size1 + size2 + size3
     data = {"size":size}
     resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": data}
     return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
@@ -33,7 +36,7 @@ def get_all_mails(request: HttpRequest):
     user = UserProfile.objects.filter(id=id).first()
     forewarn = ForewarnForUser.objects.filter(user_id=id).all()  # 订阅信息
     sysinfo = ApplicationForGlobal.objects.all()
-    admincorres = None
+    admincorres = []
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id).all()
     result = list(chain(forewarn, sysinfo, admincorres))
@@ -53,6 +56,10 @@ def get_mail_by_id(request: HttpRequest):  # 判断该用户是否能获得该�
             mail.save()
             return build_success_json_response(mail)
     return build_failed_json_response(StatusCode.NOT_FOUND, "该信息不存在")
+
+def get_forecast_from_api(request:HttpRequest):
+    get_period_forecast()
+    return build_success_json_response()
 
 
 def tackle_mail_by_id(request: HttpRequest):  # 2、3管理员功能
