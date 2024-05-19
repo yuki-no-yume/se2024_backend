@@ -1,9 +1,11 @@
 import requests
 import numpy as npy
+import geopandas as gpd
 from django.http import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
 from datetime import datetime, timedelta
 from scipy import interpolate
+from shapely.geometry import Point
 
 from utils.api_key import *
 from utils.response_util import *
@@ -129,6 +131,7 @@ def _process_meteorological_data():
     rhu_values = []
     pre3h_values = []
     winds_values = []
+    china = gpd.read_file("./utils/china.json").geometry.make_valid()
     origin_meteorological_data = AllMeteorologicalData.objects.all()
     for elm in origin_meteorological_data:
         elm.station_info = StationInfo.objects.filter(station_id=elm.Station_Id_C).first()
@@ -159,29 +162,40 @@ def _process_meteorological_data():
 
     for i in range(0, len(_lng_cn2d)):
         for j in range(0, len(_lng_cn2d[i])):
-            if interp_temp_values[i][j] > 42:
-                interp_temp_values[i][j] = 42.0
-            elif interp_temp_values[i][j] < -20:
-                interp_temp_values[i][j] = -20.0
-            interp_temp_values[i][j] += 60  # 加上偏移
-            if interp_prs_values[i][j] > 1013.25:
-                interp_prs_values[i][j] = 1013.25
-            if interp_rhu_values[i][j] > 100:
-                interp_rhu_values[i][j] = 100.0
-            elif interp_rhu_values[i][j] < 0:
-                interp_rhu_values[i][j] = 0.0
-            if interp_pre3h_values[i][j] < 0.0:
-                interp_pre3h_values[i][j] = 0.0
-            if interp_winds_values[i][j] < 0.0:
-                interp_winds_values[i][j] = 0.0
-            InterpData.objects.filter(longitude=_lng_cn2d[i][j],
-                                      latitude=_lat_cn2d[i][j]).update(
-                temp=interp_temp_values[i][j],
-                prs=interp_prs_values[i][j],
-                rhu=interp_rhu_values[i][j],
-                pre3h=interp_pre3h_values[i][j],
-                wind_s=interp_winds_values[i][j],
-            )
+            point = Point(_lng_cn2d[i][j], _lat_cn2d[i][j])
+            if china.contains(point).any():
+                if interp_temp_values[i][j] > 42:
+                    interp_temp_values[i][j] = 42.0
+                elif interp_temp_values[i][j] < -20:
+                    interp_temp_values[i][j] = -20.0
+                interp_temp_values[i][j] += 60  # 加上偏移
+                if interp_prs_values[i][j] > 1013.25:
+                    interp_prs_values[i][j] = 1013.25
+                if interp_rhu_values[i][j] > 100:
+                    interp_rhu_values[i][j] = 100.0
+                elif interp_rhu_values[i][j] < 0:
+                    interp_rhu_values[i][j] = 0.0
+                if interp_pre3h_values[i][j] < 0.0:
+                    interp_pre3h_values[i][j] = 0.0
+                if interp_winds_values[i][j] < 0.0:
+                    interp_winds_values[i][j] = 0.0
+                # InterpData.objects.create(
+                #     longitude=_lng_cn2d[i][j],
+                #     latitude=_lat_cn2d[i][j],
+                #     temp=interp_temp_values[i][j],
+                #     prs=interp_prs_values[i][j],
+                #     rhu=interp_rhu_values[i][j],
+                #     pre3h=interp_pre3h_values[i][j],
+                #     wind_s=interp_winds_values[i][j],
+                # )
+                InterpData.objects.filter(longitude=_lng_cn2d[i][j],
+                                          latitude=_lat_cn2d[i][j]).update(
+                    temp=interp_temp_values[i][j],
+                    prs=interp_prs_values[i][j],
+                    rhu=interp_rhu_values[i][j],
+                    pre3h=interp_pre3h_values[i][j],
+                    wind_s=interp_winds_values[i][j],
+                )
 
 
 @require_GET
