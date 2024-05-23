@@ -40,8 +40,13 @@ def get_all_mails(request: HttpRequest):
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id).all()
     result = list(chain(forewarn, sysinfo, admincorres))
-    sorted_result = sorted(result, key=lambda x: x.time)
-    return build_success_json_response(sorted_result)
+    sorted_result = sorted(result, key=lambda x: x.id)
+    data = []
+    for elm in sorted_result:
+        data.append(elm.to_dict())
+    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": data}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
+
 
 
 @require_GET
