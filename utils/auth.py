@@ -29,14 +29,14 @@ class JwtQueryParamsAuthentication(MiddlewareMixin):
             verified_payload = None
             verified_payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed(StatusCode.BAD_REQUEST, "登录超时")
+            return build_failed_json_response(StatusCode.BAD_REQUEST,"登录超时")
         except Exception as e:
-            raise AuthenticationFailed(StatusCode.UNAUTHORIZED, "认证失败")
+            return build_failed_json_response(StatusCode.UNAUTHORIZED, "认证失败")
 
         id = verified_payload['user_id']
         user = UserProfile.objects.filter(id=id).first()
         if user and user.level == '1' and 'admin' in request.path: # 保证每个仅管理员可用的页面包含admin
-            raise AuthenticationFailed(StatusCode.UNAUTHORIZED, "权限不足")
+            return build_failed_json_response(StatusCode.UNAUTHORIZED, "权限不足")
         #2，3
         return
 
@@ -47,9 +47,10 @@ def TokenRefresh(request:HttpRequest):
     try:
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
-        raise AuthenticationFailed(StatusCode.BAD_REQUEST, "请重新登录")
+        return build_failed_json_response(StatusCode.BAD_REQUEST, "请重新登录")
+        # raise AuthenticationFailed(StatusCode.BAD_REQUEST, "请重新登录")
     except Exception as e:
-        raise AuthenticationFailed(StatusCode.UNAUTHORIZED, "refresh_token无效")
+        return build_failed_json_response(StatusCode.UNAUTHORIZED, "refresh_token无效")
     access_payload = payload.copy()
     refresh_payload = payload.copy()
     access_payload['exp'] = datetime.datetime.utcnow() + datetime.timedelta(minutes=150)
