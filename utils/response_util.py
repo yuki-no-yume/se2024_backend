@@ -24,7 +24,9 @@ class StatusCode(Enum):
     INTERNAL_SERVER_ERROR = 500
 
 
-def build_success_json_response(result: QuerySet | Model | list = None, message: string = "SUCCESS"):
+def build_success_json_response(result=None, message: string = "SUCCESS"):
+    if result is None:
+        result = []
     if isinstance(result, QuerySet):
         data = []
         for elm in result:

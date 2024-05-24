@@ -294,7 +294,7 @@ def get_all_other_meteorological_data(request: HttpRequest):
 
 @require_POST
 def update_meteorological_data_by_admin(request: HttpRequest):
-    # 此处加入管理员权限认证
+    # TODO: 此处加入管理员权限认证
     _update_meteorological_data()
     return build_success_json_response()
 

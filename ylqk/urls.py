@@ -8,6 +8,7 @@ from ylqk.api.annoucement import *
 from ylqk.api.login import *
 from ylqk.api.homepage import *
 from ylqk.api.sub_admin import *
+from ylqk.api.data_download import *
 from utils.auth import TokenRefresh
 
 from django.contrib import admin
@@ -34,6 +35,9 @@ urlpatterns = [
     path("meteorological/update", update_meteorological_data_by_admin),  # 更新站点气象数据
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
     path("meteorological/history", get_history_meteorological_data),    # 查询历史气象数据
+
+    # 数据下载接口
+    path("dataservice/upload", file_upload),    # 数据文件上传
 
     # 通知类接口
     path('announcement/unread-number',get_unread_number), # 获取未读通知数量
