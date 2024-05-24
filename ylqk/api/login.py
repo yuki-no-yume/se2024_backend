@@ -71,15 +71,16 @@ class Register(APIView):
                     user.ver_code = res_code
                     user.time = timezone.now()
                     user.save()
-                    return build_success_json_response(user)
+                    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS'}
+                    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
                 else:
                     return build_failed_json_response(StatusCode.BAD_REQUEST, "发送邮件失败，请稍后再试")
 
             elif data_dict.get("register_type") == 'confirm':
-                user_id = data_dict.get("user_id")
-                user = UserProfile.objects.filter(id=user_id).first()
+                mail = data_dict.get("email")
+                user = UserProfile.objects.filter(email=mail).first()
                 if not user:
-                    return build_failed_json_response(StatusCode.NOT_FOUND, '用户id错误')
+                    return build_failed_json_response(StatusCode.NOT_FOUND, '用户邮箱错误')
                 if user.confirmed:
                     return build_failed_json_response(StatusCode.BAD_REQUEST, "用户已成功注册")
                 user_code = data_dict.get("user_code")
@@ -136,15 +137,16 @@ class Retrieve(APIView):
                     user.ver_code = res_code
                     user.time = timezone.now()
                     user.save()
-                    return build_success_json_response(user)
+                    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS'}
+                    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
                 else:
                     return build_failed_json_response(StatusCode.BAD_REQUEST, "发送邮件失败，请稍后再试")
 
             if data_dict.get("retrieve_type") == 'confirm':
-                user_id = data_dict.get("user_id")
-                user = UserProfile.objects.filter(id=user_id).first()
+                mail = data_dict.get("email")
+                user = UserProfile.objects.filter(email=mail).first()
                 if not user:
-                    return build_failed_json_response(StatusCode.NOT_FOUND,'用户id错误')
+                    return build_failed_json_response(StatusCode.NOT_FOUND,'用户邮箱错误')
                 user_code = data_dict.get("user_code")
                 dif = timezone.now() - user.time
                 if not user_code == user.ver_code:
