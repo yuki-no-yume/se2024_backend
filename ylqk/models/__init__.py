@@ -3,3 +3,4 @@ from .meteorological_data import *
 from .users import *
 from .announcement import *
 from .interp_data import *
+from .download_item import *
