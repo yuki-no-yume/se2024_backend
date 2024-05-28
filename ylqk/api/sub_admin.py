@@ -24,8 +24,6 @@ def admin_create_forewarn(request: HttpRequest):
         disaster.disaster_latitude = body.get("latitude")
     if body.get("description"):
         disaster.disaster_description = body.get("description")
-    if body.get('pub_time'):
-        disaster.datatime = datetime.strptime(body.get('pub_time'),'%Y%m%d%H%M%S')
     disaster.save()
     # 给审核的发一条消息
     auditor = UserProfile.objects.filter(level='3').first()

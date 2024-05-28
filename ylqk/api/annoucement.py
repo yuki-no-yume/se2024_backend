@@ -18,12 +18,13 @@ def get_unread_number(request: HttpRequest):
     id = request.GET.get("user_id")
     user = UserProfile.objects.filter(id=id).first()
     forewarn = ForewarnForUser.objects.filter(user_id=id,read=False).all()  # 订阅信息
-    sysinfo = ApplicationForGlobal.objects.filter(read=False).all()
+    # sysinfo = ApplicationForGlobal.objects.filter(read=False).all()
     admincorres = None
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id,read=False).all()
     size1 = len(forewarn) if forewarn else 0
-    size2 = len(sysinfo) if sysinfo else 0
+    size2 = 0
+    # size2 = len(sysinfo) if sysinfo else 0
     size3 = len(admincorres) if admincorres else 0
     size = size1 + size2 + size3
     data = {"size":size}
@@ -35,11 +36,11 @@ def get_all_mails(request: HttpRequest):
     id = request.GET.get("user_id")
     user = UserProfile.objects.filter(id=id).first()
     forewarn = ForewarnForUser.objects.filter(user_id=id).all()  # 订阅信息
-    sysinfo = ApplicationForGlobal.objects.all()
+    # sysinfo = ApplicationForGlobal.objects.all()
     admincorres = []
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id).all()
-    result = list(chain(forewarn, sysinfo, admincorres))
+    result = list(chain(forewarn, admincorres))
     sorted_result = sorted(result, key=lambda x: x.id)
     data = []
     for elm in sorted_result:
