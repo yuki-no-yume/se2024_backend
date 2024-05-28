@@ -107,3 +107,12 @@ class ApplicationForGlobal(Announcement):  # 系统通知，每个用户一个�
         }
         result_dict = {**base_dict, **cur_dict}
         return result_dict
+
+
+class LocationAndAddress(models.Model):
+    longitude = models.CharField(max_length=50)
+    latitude = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = "location_database"
