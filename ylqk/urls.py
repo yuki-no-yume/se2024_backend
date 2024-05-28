@@ -15,12 +15,12 @@ from django.contrib import admin
 
 urlpatterns = [
     # 用户登录
-    path('login',Login.as_view()),
-    path('register',Register.as_view()),
-    path('retrieve',Retrieve.as_view()),
-    path('reset/username',reset_username),
-    path('reset/password',reset_password),
-    path('refresh',TokenRefresh),
+    path('login', Login.as_view()),
+    path('register', Register.as_view()),
+    path('retrieve', Retrieve.as_view()),
+    path('reset/username', reset_username),
+    path('reset/password', reset_password),
+    path('refresh', TokenRefresh),
 
     # 气象数据查询接口
     path("meteorological/station-info", get_station_info),  # 查询所有气象站点信息
@@ -34,18 +34,20 @@ urlpatterns = [
     path("meteorological/other-meteorological-data/all", get_all_other_meteorological_data),  # 查询站点其他气象数据
     path("meteorological/update", update_meteorological_data_by_admin),  # 更新站点气象数据
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
-    path("meteorological/history", get_history_meteorological_data),    # 查询历史气象数据
+    path("meteorological/history", get_history_meteorological_data),  # 查询历史气象数据
 
     # 数据下载接口
-    path("dataservice/upload", file_upload),    # 数据文件上传
-    path("dataservice/delete", file_delete),    # 数据文件删除
+    path("dataservice/upload", file_upload),  # 数据文件上传
+    path("dataservice/delete", file_delete),  # 数据文件删除
+    path("dataservice/search", file_search),  # 数据文件搜索
+    path("dataservice/download", file_download),    # 数据文件下载
 
     # 通知类接口
-    path('announcement/unread-number',get_unread_number), # 获取未读通知数量
-    path('announcement/list',get_all_mails), # 获取所有通知
+    path('announcement/unread-number', get_unread_number),  # 获取未读通知数量
+    path('announcement/list', get_all_mails),  # 获取所有通知
     path("announcement/id", get_mail_by_id),  # 通过id获取通知详情
-    path('announcement/id/admin',tackle_mail_by_id), # 审核和发布管理员间的通信
-    path('announcement/update',get_forecast_from_api),
+    path('announcement/id/admin', tackle_mail_by_id),  # 审核和发布管理员间的通信
+    path('announcement/update', get_forecast_from_api),
 
     # 管理员功能
     path('sub-admin/manual', admin_create_forewarn),  # 手动创建灾害预警
