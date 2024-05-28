@@ -13,7 +13,7 @@ def get_period_forecast():
         'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1 Edg/117.0.0.0'
     }
     param = {
-        'key' : 'S7im19ViaQ4UkF7t9', # 私钥！！！
+        'key' : 'SN_H868TafuTTtyLb', # 私钥！！！
         'detail' : 'more',
     }
     response = requests.get(url = url,params = param,headers=headers)
