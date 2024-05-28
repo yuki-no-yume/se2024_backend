@@ -27,9 +27,11 @@ class Login(APIView):
             data_dict = json.loads(body_data)  # 将字符串解析为字典
             name = data_dict.get('username')
             pwd = data_dict.get('password')
-            user_object = UserProfile.objects.filter(username=name, password=pwd).first()
+            user_object = UserProfile.objects.filter(username=name).first()
             if (not user_object) or (user_object.confirmed==False):
-                return build_failed_json_response(StatusCode.NOT_FOUND, "用户名或密码错误")
+                return build_failed_json_response(StatusCode.OK,"用户不存在")
+            elif not user_object.password == pwd:
+                return build_failed_json_response(StatusCode.OK, "密码错误")
         except Exception as e:
             return build_failed_json_response(StatusCode.BAD_REQUEST, "请提供有效的用户名密码")
         payload = {

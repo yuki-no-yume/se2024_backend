@@ -31,15 +31,6 @@ class UserProfile(models.Model):
             "level":dict(self.type).get(self.level, '未知用户类型'),
         }
 
-    def to_dict(self):
-        return {
-            "user_id":self.id,
-            "username":self.username,
-            "password":self.password,
-            "email":self.email,
-            "level":self.level,
-        }
-
 
 class Subscribed(models.Model):  # 订阅城市
     user = models.ForeignKey(to='UserProfile', to_field='id', on_delete=models.CASCADE, related_name='notAdmin')
