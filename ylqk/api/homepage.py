@@ -74,6 +74,3 @@ def reset_username(request:HttpRequest):
         build_failed_json_response(StatusCode.BAD_REQUEST, "用户id错误")
     return build_success_json_response()
 
-def test(request:HttpRequest):
-    result = UserProfile.objects.all()
-    return build_success_json_response(result)

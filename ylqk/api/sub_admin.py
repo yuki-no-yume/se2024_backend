@@ -5,7 +5,6 @@ import requests
 from utils.response_util import *
 from ..models.users import *
 from ..models.announcement import *
-from ..api.annoucement import publish, getSurroundings
 
 
 def admin_create_forewarn(request: HttpRequest):

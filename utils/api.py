@@ -6,6 +6,7 @@ import pytz
 from datetime import datetime
 from ylqk.models.announcement import AIDisasterForecast
 from apscheduler.schedulers.background import BackgroundScheduler
+from ylqk.api.sub_admin import get_location_by_address
 
 def get_period_forecast():
     url = "https://api.seniverse.com/v3/weather/alarm.json"
@@ -34,6 +35,9 @@ def get_period_forecast():
                                                              disaster_location="-1", disaster_longitude=-1,
                                                              disaster_latitude=-1)
                 disaster.disaster_location = location
+                addr = get_location_by_address(location)
+                disaster.disaster_latitude = addr['lat']
+                disaster.disaster_longitude = addr['lng']
                 disaster.disaster_type = forecast['type']
                 disaster.disaster_level = forecast['level']
                 disaster.disaster_description = forecast['description']
