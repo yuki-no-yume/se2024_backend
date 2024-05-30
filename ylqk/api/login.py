@@ -25,9 +25,9 @@ class Login(APIView):
         body_data = request.body.decode('utf-8')  # 解码请求体数据为字符串
         try:
             data_dict = json.loads(body_data)  # 将字符串解析为字典
-            name = data_dict.get('username')
+            email = data_dict.get('username')
             pwd = data_dict.get('password')
-            user_object = UserProfile.objects.filter(username=name).first()
+            user_object = UserProfile.objects.filter(email=email).first()
             if (not user_object) or (user_object.confirmed==False):
                 return build_failed_json_response(StatusCode.OK,"用户不存在")
             elif not user_object.password == pwd:
