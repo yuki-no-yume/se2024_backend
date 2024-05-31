@@ -1,14 +1,15 @@
 import os
 import random
 from datetime import datetime
-from django.http import HttpRequest
-from django.views.decorators.http import require_POST
+from django.http import HttpRequest, FileResponse
+from django.views.decorators.http import require_POST, require_GET
 
 from utils.response_util import *
 from ylqk.models import DownloadItem, DataDescriptionImage
 
 DATA_PATH = "./file/data"
 IMAGES_PATH = "./file/images"
+PAGE_SIZE = 20
 
 
 def _file_rename(origin_name: str, is_data: bool = False) -> str:
@@ -50,7 +51,7 @@ def file_upload(request: HttpRequest):
         with open(image_url, "wb") as image:
             image.write(upload_image.file.read())
         DataDescriptionImage.objects.create(
-            belongs2id=download_item.item_id,
+            belongs2id=download_item.file_id,
             image_url=image_url,
         )
     return build_success_json_response(message="文件上传成功")
@@ -59,7 +60,41 @@ def file_upload(request: HttpRequest):
 @require_POST
 def file_delete(request: HttpRequest):
     # TODO: 检查权限
-    item_id = request.POST.get("item_id")
-    DataDescriptionImage.objects.filter(belongs2id=item_id).delete()
-    DownloadItem.objects.filter(item_id=item_id).delete()
+    file_id = request.POST.get("file_id")
+    DataDescriptionImage.objects.filter(belongs2id=file_id).delete()
+    DownloadItem.objects.filter(file_id=file_id).delete()
     return build_success_json_response(message="文件删除成功")
+
+
+@require_GET
+def file_search(request: HttpRequest):
+    keyword = request.GET.get("keyword")
+    page = request.GET.get("page") if request.GET.get("page") is not None else 1
+    if keyword is not None:
+        item_all = DownloadItem.objects.filter(title__icontains=keyword)
+    else:
+        item_all = DownloadItem.objects.all()
+    if (page - 1) * PAGE_SIZE <= len(item_all):
+        cur_page = page
+        item_sub = item_all[(page - 1) * PAGE_SIZE:page * PAGE_SIZE]
+    else:
+        cur_page = int(len(item_all) / PAGE_SIZE)
+        item_sub = item_all[cur_page * PAGE_SIZE:]
+    files = []
+    for elm in item_sub:
+        files.append(elm.to_dict())
+    return build_success_json_response({
+        "page": cur_page,
+        "files": files,
+    })
+
+
+@require_POST
+def file_download(request: HttpRequest):
+    file_id = request.POST.get("file_id")
+    download_item = DownloadItem.objects.filter(file_id=file_id).first()
+    if download_item is None:
+        return build_failed_json_response(StatusCode.NOT_FOUND, message="文件不存在")
+    file = open(download_item.file_url, "rb")
+    response = FileResponse(file, as_attachment=True)
+    return response

@@ -40,6 +40,8 @@ urlpatterns = [
     # 数据下载接口
     path("dataservice/upload", file_upload),  # 数据文件上传
     path("dataservice/delete", file_delete),  # 数据文件删除
+    path("dataservice/search", file_search),  # 数据文件搜索
+    path("dataservice/download", file_download),    # 数据文件下载
 
     # 通知类接口
     path('announcement/unread-number', get_unread_number),  # 获取未读通知数量
