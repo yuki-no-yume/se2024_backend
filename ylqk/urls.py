@@ -10,6 +10,7 @@ from ylqk.api.homepage import *
 from ylqk.api.sub_admin import *
 from ylqk.api.data_download import *
 from utils.auth import TokenRefresh
+from ylqk.api.timegpt import *
 
 from django.contrib import admin
 
@@ -57,4 +58,22 @@ urlpatterns = [
     path('disasters', get_all_published_disasters),
     path('subscribe', add_subscribe_city),
     path('undo-subscribe', del_subscribe_city),
+    path('test', test),
+
+    # AI预测接口
+    path("forecast/PRS", get_PRS_forecast),  # 获取气压预测数据
+    path("forecast/PRS-Sea", get_PRS_Sea_forecast),  # 获取海平面气压预测数据
+    path("forecast/PRS-Max", get_PRS_Max_forecast),  # 获取最高气压预测数据
+    path("forecast/PRS-Min", get_PRS_Min_forecast),  # 获取最低气压预测数据
+    path("forecast/TEM", get_TEM_forecast),  # 获取气温预测数据
+    path("forecast/TEM-MAX", get_TEM_MAX_forecast),  # 获取最高气温预测数据
+    path("forecast/TEM-MIN", get_TEM_MIN_forecast),  # 获取最低气温预测数据
+    path("forecast/RHU", get_RHU_forecast),  # 获取相对湿度预测数据
+    path("forecast/RHU-Min", get_RHU_Min_forecast),  # 获取最小相对湿度预测数据
+    path("forecast/VAP", get_VAP_forecast),  # 获取水汽压预测数据
+    path("forecast/PRE-3h", get_PRE_3h_forecast),  # 获取3小时降水量预测数据
+    path("forecast/WIN-S-MAX", get_WIN_S_MAX_forecast),  # 获取最大风速预测数据
+    path("forecast/WIN-S-Inst-Max", get_WIN_S_Inst_Max_forecast),  # 获取极大风速预测数据
+    path("forecast/CLO-Cov", get_CLO_Cov_forecast),  # 获取总云量预测数据
+    path("forecast/CLO-Cov-Low", get_CLO_Cov_Low_forecast),  # 获取低云量预测数据
 ]

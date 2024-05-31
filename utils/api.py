@@ -23,10 +23,15 @@ def get_period_forecast():
         loc = item['location']['path']
         locs = loc.split(',')
         num = len(locs)
-        province = locs[num - 2] if num >= 2 else ""
-        city = locs[num - 3] if num >= 3 else ""
-        district = locs[num - 4] if num >= 4 else ""
-        location = province + "-" + city + "-" + district
+        if num == 3: # 直辖市
+            province = locs[1]
+            city = locs[1]
+            district = locs[0]
+        if num == 4: # 省 or 自治区
+            province = locs[2]
+            city = locs[1]
+            district = locs[0]
+        location = province + "-" + city + "-" + "" if city==district else district
         for forecast in item['alarms']:
             alarm_id = forecast['alarm_id']
             dis = AIDisasterForecast.objects.filter(alarm_id=alarm_id).first()

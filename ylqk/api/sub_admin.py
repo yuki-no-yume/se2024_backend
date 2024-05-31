@@ -49,4 +49,14 @@ def get_location_by_address(address):
         LocationAndAddress.objects.create(longitude=location['lng'],latitude=location['lat'],name=address)
         return location  # 返回形如 {'lng': 116.404, 'lat': 39.915} 的字典
     else:
+        # 加上省、市、区再试一遍
+        locs = address.split('-')
+        new_address = locs[0] + '省-' + locs[1] + '市-' + locs[2] + ("区" if len(locs[2]) != 0 else "")
+        url = f"http://api.map.baidu.com/geocoding/v3/?address={new_address}&output=json&ak={ak}"
+        response = requests.get(url)
+        result = response.json()
+        if response.status_code == 200 and result.get('status') == 0:
+            location = result.get('result').get('location')
+            LocationAndAddress.objects.create(longitude=location['lng'], latitude=location['lat'], name=address)
+            return location  # 返回形如 {'lng': 116.404, 'lat': 39.915} 的字典
         return {"lng": -1, "lat": -1}
