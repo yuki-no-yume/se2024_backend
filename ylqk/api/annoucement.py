@@ -163,5 +163,10 @@ def getSurroundings(loc):
         min_unit = [part.strip() for part in tmp if part.strip()][-1]
         if min_loc in unit or min_unit in loc:
             users.append(item.user)
+        else:
+            for tmp in locs:
+                if tmp != '' and tmp in min_unit:
+                    users.append(item.user)
+                    break
     unique_list = list(set(users))
     return unique_list

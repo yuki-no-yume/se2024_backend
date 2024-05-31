@@ -74,3 +74,35 @@ def reset_username(request:HttpRequest):
         build_failed_json_response(StatusCode.BAD_REQUEST, "用户id错误")
     return build_success_json_response()
 
+def test(request:HttpRequest):
+    import requests
+    from ylqk.api.sub_admin import get_location_by_address
+    url = "https://api.seniverse.com/v3/weather/alarm.json"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1 Edg/117.0.0.0'
+    }
+    param = {
+        'key': 'SN_H868TafuTTtyLb',  # 私钥！！！
+        'detail': 'more',
+    }
+    response = requests.get(url=url, params=param, headers=headers)
+    data = response.json()
+    for item in data['results']:
+        loc = item['location']['path']
+        locs = loc.split(',')
+        num = len(locs)
+        if num == 3:  # 直辖市
+            province = locs[1]
+            city = locs[1]
+            district = locs[0]
+        if num == 4:  # 省 or 自治区
+            province = locs[2]
+            city = locs[1]
+            district = locs[0]
+        location = province + "-" + city + "-" + ("" if city == district else district) # 省级预警不知道api什么格式、市区级预警。
+        for forecast in item['alarms']:
+            addr = get_location_by_address(location)
+            print(loc,addr,location)
+    return build_success_json_response()
+
+
