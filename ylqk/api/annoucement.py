@@ -144,6 +144,12 @@ def tackle_mail_by_id(request: HttpRequest):  # 2、3管理员功能
 def publish(did):
     disaster = AIDisasterForecast.objects.filter(id=did).first()
     if disaster:
+        disaster.published = True
+        if disaster.disaster_longitude == '-1':
+            locs = get_location_by_address(disaster.disaster_location)
+            disaster.disaster_longitude = locs['lng']
+            disaster.disaster_latitude = locs['lat']
+        disaster.save()
         users = getSurroundings(disaster.disaster_location)
         for user in users:
             userMes = ForewarnForUser(disaster_id=did, user_id=user.id)

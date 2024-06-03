@@ -408,3 +408,23 @@ def get_history_meteorological_data(request: HttpRequest):
             "value": values[i],
         })
     return build_success_json_response(result)
+
+@require_GET
+def get_current_city_weather(request:HttpRequest):
+    longitude = request.GET.get('longitude')
+    latitude = request.GET.get('latitude')
+    url = 'https://api.seniverse.com/v3/weather/now.json?'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1 Edg/117.0.0.0'
+    }
+    param = {
+        'key' : 'SN_H868TafuTTtyLb', # 私钥！！！
+        'language':'zh-Hans',
+        'unit':'c',
+    }
+    param['location'] = latitude + ":" + longitude
+    response = requests.get(url = url,params = param,headers=headers)
+    data = response.json()
+    data = data['results'][0]['now']
+    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": data}
+    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")

@@ -14,4 +14,5 @@ admin.site.register(Announcement)
 admin.site.register(AIDisasterForecast)
 admin.site.register(ForecastForAdmin)
 admin.site.register(ForewarnForUser)
+admin.site.register(LocationAndAddress)
 
