@@ -36,6 +36,7 @@ urlpatterns = [
     path("meteorological/update", update_meteorological_data_by_admin),  # 更新站点气象数据
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
     path("meteorological/history", get_history_meteorological_data),  # 查询历史气象数据
+    path('meteorological/instant',get_current_city_weather),
 
     # 数据下载接口
     path("dataservice/upload", file_upload),  # 数据文件上传
