@@ -16,11 +16,12 @@ def admin_create_forewarn(request: HttpRequest):
         disaster.disaster_type = body.get("type")
     if body.get("level"):
         disaster.disaster_level = body.get("level")
-    if body.get("location"):
-        disaster.disaster_location = body.get("location")
-        locs = get_location_by_address(body.get("location"))
-        disaster.disaster_longitude = locs['lng']
-        disaster.disaster_latitude = locs['lat']
+    if not body.get("location"):
+        return build_failed_json_response(StatusCode.BAD_REQUEST,'灾害位置不可为空')
+    disaster.disaster_location = body.get("location")
+    locs = get_location_by_address(body.get("location"))
+    disaster.disaster_longitude = locs['lng']
+    disaster.disaster_latitude = locs['lat']
     if body.get("description"):
         disaster.disaster_description = body.get("description")
     disaster.save()
