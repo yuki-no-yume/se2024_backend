@@ -31,7 +31,7 @@ def get_period_forecast():
             province = locs[2]
             city = locs[1]
             district = locs[0]
-        location = province + "-" + city + "-" + "" if city==district else district
+        location = province + "-" + city + "-" + ("" if city==district else district)
         for forecast in item['alarms']:
             alarm_id = forecast['alarm_id']
             dis = AIDisasterForecast.objects.filter(alarm_id=alarm_id).first()
