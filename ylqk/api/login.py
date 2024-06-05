@@ -181,7 +181,7 @@ def send_sms_code(to_email):
     sms_code = '%06d' % random.randint(0, 999999)
     EMAIL_FROM = "se2024_ylqk@163.com"  # 邮箱来自
     email_title = '账号激活'
-    email_body = "【云岚乾坤】验证码 {0} 用于邮箱验证，10分钟内有效，请勿泄露和转发。如非本人操作，请忽略此邮件。".format(sms_code)
+    email_body = "【云览乾坤】验证码 {0} 用于邮箱验证，10分钟内有效，请勿泄露和转发。如非本人操作，请忽略此邮件。".format(sms_code)
     send_status = send_mail(email_title, email_body, EMAIL_FROM, [to_email])
     if send_status:
         send_status = sms_code
