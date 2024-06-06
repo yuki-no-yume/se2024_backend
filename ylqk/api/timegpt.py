@@ -45,13 +45,11 @@ def addZero(line):
 @require_GET
 def get_PRS_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
@@ -107,22 +105,23 @@ def get_PRS_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    # timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    # timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    # print(timegpt_fcst_PRS_Sea)
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -151,7 +150,6 @@ def get_PRS_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
         target_col='PRS',
         time_col='ds'
@@ -164,20 +162,18 @@ def get_PRS_forecast(request: HttpRequest):
 @require_GET
 def get_PRS_Sea_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -227,22 +223,22 @@ def get_PRS_Sea_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
     # timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -271,9 +267,8 @@ def get_PRS_Sea_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='PRS_Sea',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -284,20 +279,18 @@ def get_PRS_Sea_forecast(request: HttpRequest):
 @require_GET
 def get_PRS_Max_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -347,22 +340,22 @@ def get_PRS_Max_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
     # timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -391,9 +384,8 @@ def get_PRS_Max_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='PRS_Max',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -404,20 +396,18 @@ def get_PRS_Max_forecast(request: HttpRequest):
 @require_GET
 def get_PRS_Min_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -467,22 +457,22 @@ def get_PRS_Min_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
     # timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -511,9 +501,8 @@ def get_PRS_Min_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='PRS_Min',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -524,20 +513,18 @@ def get_PRS_Min_forecast(request: HttpRequest):
 @require_GET
 def get_TEM_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -587,22 +574,22 @@ def get_TEM_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
     # timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -631,9 +618,8 @@ def get_TEM_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='TEM',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -644,20 +630,18 @@ def get_TEM_forecast(request: HttpRequest):
 @require_GET
 def get_TEM_MAX_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -707,22 +691,22 @@ def get_TEM_MAX_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
     # timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -751,9 +735,8 @@ def get_TEM_MAX_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='TEM_MAX',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -764,20 +747,18 @@ def get_TEM_MAX_forecast(request: HttpRequest):
 @require_GET
 def get_TEM_MIN_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -827,22 +808,22 @@ def get_TEM_MIN_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
     # timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -871,9 +852,8 @@ def get_TEM_MIN_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='TEM_MIN',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -884,20 +864,18 @@ def get_TEM_MIN_forecast(request: HttpRequest):
 @require_GET
 def get_RHU_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -947,22 +925,22 @@ def get_RHU_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
     # timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -991,9 +969,8 @@ def get_RHU_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='RHU',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1004,20 +981,18 @@ def get_RHU_forecast(request: HttpRequest):
 @require_GET
 def get_RHU_Min_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1067,22 +1042,22 @@ def get_RHU_Min_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
     # timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1111,9 +1086,8 @@ def get_RHU_Min_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='RHU_Min',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1124,20 +1098,18 @@ def get_RHU_Min_forecast(request: HttpRequest):
 @require_GET
 def get_VAP_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1187,22 +1159,22 @@ def get_VAP_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
     # timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1231,9 +1203,8 @@ def get_VAP_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='VAP',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1244,20 +1215,18 @@ def get_VAP_forecast(request: HttpRequest):
 @require_GET
 def get_PRE_3h_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1307,22 +1276,22 @@ def get_PRE_3h_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
     # timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1351,9 +1320,8 @@ def get_PRE_3h_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='PRE_3h',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1364,20 +1332,18 @@ def get_PRE_3h_forecast(request: HttpRequest):
 @require_GET
 def get_WIN_S_MAX_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1427,22 +1393,22 @@ def get_WIN_S_MAX_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
     # timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1471,9 +1437,8 @@ def get_WIN_S_MAX_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='WIN_S_MAX',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1484,20 +1449,18 @@ def get_WIN_S_MAX_forecast(request: HttpRequest):
 @require_GET
 def get_WIN_S_Inst_Max_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1547,21 +1510,21 @@ def get_WIN_S_Inst_Max_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
     # timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h', target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1590,9 +1553,8 @@ def get_WIN_S_Inst_Max_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='WIN_S_Inst_Max',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1603,20 +1565,18 @@ def get_WIN_S_Inst_Max_forecast(request: HttpRequest):
 @require_GET
 def get_CLO_Cov_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1666,22 +1626,22 @@ def get_CLO_Cov_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
     # timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
-    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
+    timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, time_col='ds', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
                          station_id, station_id, station_id, station_id, station_id,
@@ -1710,9 +1670,8 @@ def get_CLO_Cov_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='CLO_Cov',
         time_col='ds'
     )
     data = forecast_df.to_dict()
@@ -1723,20 +1682,18 @@ def get_CLO_Cov_forecast(request: HttpRequest):
 @require_GET
 def get_CLO_Cov_Low_forecast(request: HttpRequest):
     end = datetime.now()
-    delta = timedelta(days=5)
+    delta = timedelta(days=7)
     begin = end - delta
     end = end.strftime('%Y%m%d%H%M%S')
     begin = begin.strftime('%Y%m%d%H%M%S')
     time = '[' + begin + ',' + end + ']'
-    account = '716993315790upwVr'
-    password = 'GxSThLx'
     staId = request.GET.get("station_id")
     response = requests.get(
         'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
-    for info in data:
+    for info in data['DS']:
         element = {
             'Station_Id_C': info['Station_Id_C'],
             'ds': info['Year'] + '-' + addZero(info['Mon']) + '-' + addZero(info['Day']) + ' ' + addZero(
@@ -1786,21 +1743,21 @@ def get_CLO_Cov_Low_forecast(request: HttpRequest):
     df_CLO_Cov_Low = df[['Station_Id_C', 'ds', 'CLO_Cov_Low']]
 
     station_id = request.GET.get("station_id")
-    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, freq='h', target_col='PRS')
-    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, freq='h', target_col='PRS_Sea')
-    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, freq='h', target_col='PRS_Max')
-    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, freq='h', target_col='PRS_Min')
-    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, freq='h', target_col='TEM')
-    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, freq='h', target_col='TEM_MAX')
-    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, freq='h', target_col='TEM_MIN')
-    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, freq='h', target_col='RHU')
-    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, freq='h', target_col='RHU_Min')
-    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, freq='h', target_col='VAP')
-    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, freq='h', target_col='PRE_3h')
-    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, freq='h', target_col='WIN_S_MAX')
-    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, freq='h',
+    timegpt_fcst_PRS = nixtla_client.forecast(df=df_PRS, h=24, time_col='ds', target_col='PRS')
+    timegpt_fcst_PRS_Sea = nixtla_client.forecast(df=df_PRS_Sea, h=24, time_col='ds', target_col='PRS_Sea')
+    timegpt_fcst_PRS_Max = nixtla_client.forecast(df=df_PRS_Max, h=24, time_col='ds', target_col='PRS_Max')
+    timegpt_fcst_PRS_Min = nixtla_client.forecast(df=df_PRS_Min, h=24, time_col='ds', target_col='PRS_Min')
+    timegpt_fcst_TEM = nixtla_client.forecast(df=df_TEM, h=24, time_col='ds', target_col='TEM')
+    timegpt_fcst_TEM_MAX = nixtla_client.forecast(df=df_TEM_MAX, h=24, time_col='ds', target_col='TEM_MAX')
+    timegpt_fcst_TEM_MIN = nixtla_client.forecast(df=df_TEM_MIN, h=24, time_col='ds', target_col='TEM_MIN')
+    timegpt_fcst_RHU = nixtla_client.forecast(df=df_RHU, h=24, time_col='ds', target_col='RHU')
+    timegpt_fcst_RHU_Min = nixtla_client.forecast(df=df_RHU_Min, h=24, time_col='ds', target_col='RHU_Min')
+    timegpt_fcst_VAP = nixtla_client.forecast(df=df_VAP, h=24, time_col='ds', target_col='VAP')
+    timegpt_fcst_PRE_3h = nixtla_client.forecast(df=df_PRE_3h, h=24, time_col='ds', target_col='PRE_3h')
+    timegpt_fcst_WIN_S_MAX = nixtla_client.forecast(df=df_WIN_S_MAX, h=24, time_col='ds', target_col='WIN_S_MAX')
+    timegpt_fcst_WIN_S_Inst_Max = nixtla_client.forecast(df=df_WIN_S_Inst_Max, h=24, time_col='ds',
                                                          target_col='WIN_S_Inst_Max')
-    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, freq='h', target_col='CLO_Cov')
+    timegpt_fcst_CLO_Cov = nixtla_client.forecast(df=df_CLO_Cov, h=24, time_col='ds', target_col='CLO_Cov')
     # timegpt_fcst_CLO_Cov_Low = nixtla_client.forecast(df=df_CLO_Cov_Low, h=24, freq='h', target_col='CLO_Cov_Low')
     merge = pd.DataFrame({
         'Station_Id_C': [station_id, station_id, station_id, station_id, station_id, station_id, station_id, station_id,
@@ -1830,9 +1787,8 @@ def get_CLO_Cov_Low_forecast(request: HttpRequest):
         df=df,
         X_df=future_ex_vars_df,
         h=24,
-        freq='h',
         id_col='Station_Id_C',
-        target_col='PRS',
+        target_col='CLO_Cov_Low',
         time_col='ds'
     )
     data = forecast_df.to_dict()
