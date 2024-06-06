@@ -7,8 +7,8 @@ from django.views.decorators.http import require_POST, require_GET
 from utils.response_util import *
 from ylqk.models import DownloadItem, DataDescriptionImage
 
-DATA_PATH = "./file/data"
-IMAGES_PATH = "./file/images"
+DATA_PATH = "/root/SE2024/se2024_backend/file/data"
+IMAGES_PATH = "/root/SE2024/se2024_backend/file/images"
 PAGE_SIZE = 20
 
 
