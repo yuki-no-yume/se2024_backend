@@ -20,6 +20,7 @@ class JwtQueryParamsAuthentication(MiddlewareMixin):
             '/ylqk/retrieve',
             '/ylqk/test',
             '/ylqk',
+            "/file/images"
         ]
         if any(request.path.startswith(path) for path in excluded_paths):
             return
