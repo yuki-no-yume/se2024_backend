@@ -9,10 +9,10 @@ admin.site.register(UserProfile)
 # admin.site.register(ApplicationForGlobal)
 
 # 仅用于测试
-admin.site.register(Subscribed)
-admin.site.register(Announcement)
-admin.site.register(AIDisasterForecast)
-admin.site.register(ForecastForAdmin)
-admin.site.register(ForewarnForUser)
-admin.site.register(LocationAndAddress)
+# admin.site.register(Subscribed)
+# admin.site.register(Announcement)
+# admin.site.register(AIDisasterForecast)
+# admin.site.register(ForecastForAdmin)
+# admin.site.register(ForewarnForUser)
+# admin.site.register(LocationAndAddress)
 
