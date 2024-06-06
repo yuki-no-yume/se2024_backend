@@ -52,7 +52,7 @@ def get_PRS_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
     for info in data['DS']:
@@ -169,7 +169,7 @@ def get_PRS_Sea_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -286,7 +286,7 @@ def get_PRS_Max_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -403,7 +403,7 @@ def get_PRS_Min_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -520,7 +520,7 @@ def get_TEM_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -637,7 +637,7 @@ def get_TEM_MAX_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -754,7 +754,7 @@ def get_TEM_MIN_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -871,7 +871,7 @@ def get_RHU_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -988,7 +988,7 @@ def get_RHU_Min_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1105,7 +1105,7 @@ def get_VAP_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1222,7 +1222,7 @@ def get_PRE_3h_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1339,7 +1339,7 @@ def get_WIN_S_MAX_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1456,7 +1456,7 @@ def get_WIN_S_Inst_Max_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1572,7 +1572,7 @@ def get_CLO_Cov_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
@@ -1689,7 +1689,7 @@ def get_CLO_Cov_Low_forecast(request: HttpRequest):
     time = '[' + begin + ',' + end + ']'
     staId = request.GET.get("station_id")
     response = requests.get(
-        'http://api.data.cma.cn:8090/api?userId=' + account + '&pwd=' + password + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
+        'http://api.data.cma.cn:8090/api?userId=' + USER_ID + '&pwd=' + PWD + '&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H&timeRange=' + time + '&staIDs=' + staId + '&elements=Station_Id_C,Year,Mon,Day,Hour,PRS,PRS_Sea,PRS_Max,PRS_Min,TEM,TEM_MAX,TEM_MIN,RHU,RHU_Min,VAP,PRE_3h,WIN_S_MAX,WIN_S_Inst_Max,CLO_Cov,CLO_Cov_Low')
     data = response.json()
     infos = []
 
