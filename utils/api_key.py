@@ -1,4 +1,4 @@
-USER_ID = "717655172018RtZtg"
+USER_ID = "717655172018RtZtq"
 PWD = "QZbQ0qc"
 BASIC_URL = f"http://api.data.cma.cn:8090/api?userId={USER_ID}&pwd={PWD}" \
             "&dataFormat=json&interfaceId=getSurfEleByTimeRangeAndStaID&dataCode=SURF_CHN_MUL_HOR_3H"
