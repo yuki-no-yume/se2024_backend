@@ -3,14 +3,8 @@ define the url routes of ylqk/api
 """
 from django.urls import path
 
-from ylqk.api.meteorological_data import *
-from ylqk.api.annoucement import *
-from ylqk.api.login import *
-from ylqk.api.homepage import *
-from ylqk.api.sub_admin import *
-from ylqk.api.data_download import *
+from ylqk.api import *
 from utils.auth import TokenRefresh
-from ylqk.api.timegpt import *
 
 from django.contrib import admin
 
