@@ -54,7 +54,7 @@ def _update_meteorological_data():
     # &timeRange=[20240404110000,20240411110000]&staIDs=54433,54399
     hours_delta = 3 if datetime.utcnow().hour % 3 == 0 else int(datetime.utcnow().hour % 3)
     update_time = (datetime.utcnow() - timedelta(hours=hours_delta)).strftime("%Y%m%d%H0000")
-    basic_url = BASIC_API + ALL_ELEMENTS + f"&timeRange=[{update_time},{update_time}]"
+    basic_url = BASIC_URL + ALL_ELEMENTS + f"&timeRange=[{update_time},{update_time}]"
     stations = StationInfo.objects.all()
     index = 0
     while index < len(stations):
@@ -377,7 +377,7 @@ def get_history_meteorological_data(request: HttpRequest):
         return build_failed_json_response(status_code=StatusCode.BAD_REQUEST)
     from_time = (datetime.utcnow() - timedelta(days=7)).strftime("%Y%m%d000000")
     to_time = datetime.utcnow().strftime("%Y%m%d000000")
-    url = BASIC_API + f"&staIDs={station_id}&timeRange=[{from_time},{to_time}]" \
+    url = BASIC_URL + f"&staIDs={station_id}&timeRange=[{from_time},{to_time}]" \
                       f"&elements=Datetime,{element_params[data_type]}"
     data = requests.get(url).json()["DS"]
 
@@ -409,22 +409,18 @@ def get_history_meteorological_data(request: HttpRequest):
         })
     return build_success_json_response(result)
 
+
 @require_GET
-def get_current_city_weather(request:HttpRequest):
+def get_current_city_weather(request: HttpRequest):
     longitude = request.GET.get('longitude')
     latitude = request.GET.get('latitude')
     url = 'https://api.seniverse.com/v3/weather/now.json?'
     headers = {
-        'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1 Edg/117.0.0.0'
+        'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) '
+                      'CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1 Edg/117.0.0.0'
     }
-    param = {
-        'key' : 'SN_H868TafuTTtyLb', # 私钥！！！
-        'language':'zh-Hans',
-        'unit':'c',
-    }
-    param['location'] = latitude + ":" + longitude
-    response = requests.get(url = url,params = param,headers=headers)
+    params = {'key': 'SN_H868TafuTTtyLb', 'language': 'zh-Hans', 'unit': 'c', 'location': latitude + ":" + longitude}
+    response = requests.get(url=url, params=params, headers=headers)
     data = response.json()
     data = data['results'][0]['now']
-    resp_body = {"status_code": StatusCode.OK.value, "message": 'SUCCESS', "data": data}
-    return HttpResponse(status=200, content=json.dumps(resp_body), content_type="application/json")
+    return build_success_json_response(data)

@@ -3,14 +3,8 @@ define the url routes of ylqk/api
 """
 from django.urls import path
 
-from ylqk.api.meteorological_data import *
-from ylqk.api.annoucement import *
-from ylqk.api.login import *
-from ylqk.api.homepage import *
-from ylqk.api.sub_admin import *
-from ylqk.api.data_download import *
+from ylqk.api import *
 from utils.auth import TokenRefresh
-from ylqk.api.timegpt import *
 
 from django.contrib import admin
 
@@ -36,7 +30,7 @@ urlpatterns = [
     path("meteorological/update", update_meteorological_data_by_admin),  # 更新站点气象数据
     path("meteorological/interp", get_interp_meteorological_data),  # 查询插值气象数据
     path("meteorological/history", get_history_meteorological_data),  # 查询历史气象数据
-    path('meteorological/instant',get_current_city_weather),
+    path('meteorological/instant', get_current_city_weather),   # 查询指定经纬度实况天气
 
     # 数据下载接口
     path("dataservice/upload", file_upload),  # 数据文件上传

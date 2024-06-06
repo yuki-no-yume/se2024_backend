@@ -6,7 +6,7 @@ from django.db import transaction
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from polymorphic.query import PolymorphicQuerySet
-from utils.api import *
+from utils.seniverse_api import *
 
 from utils.response_util import *
 from ..models.announcement import *
