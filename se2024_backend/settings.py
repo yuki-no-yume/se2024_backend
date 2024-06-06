@@ -166,7 +166,7 @@ REST_FRAMEWORK = {
 
 CRONJOBS = [
     ('0 */3 * * *', 'ylqk.api.meteorological_data._update_meteorological_data', '>> ~/SE2024/se2024_backend/tmp/logs/update.log'),
-    ('*/5 * * * *','utils.api.get_period_forecast'),
+    ('*/5 * * * *', 'utils.api.get_period_forecast'),
 ]
 
 # 发送邮箱验证码
