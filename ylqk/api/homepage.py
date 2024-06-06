@@ -21,6 +21,7 @@ def get_all_published_disasters(request:HttpRequest):
         begin_time = request.GET.get("begin_time")
         begin_time = datetime.strptime(begin_time,'%Y%m%d%H%M%S')
     disasters = AIDisasterForecast.objects.filter(datatime__gte=begin_time,published=True).all()
+    print(len(disasters))
     if isinstance(disasters, QuerySet) or isinstance(disasters, Model):
         return build_success_json_response(disasters)
     else:
@@ -106,15 +107,9 @@ def test(request:HttpRequest):
     # return build_success_json_response()
 
 
-    items = AIDisasterForecast.objects.filter(disaster_latitude='-1').all()
-    for item in items:
-        if item.id >= 600 and item.disaster_location != '-1':
-            # print(item.id,get_location_by_address(item.disaster_location))
-            locs = get_location_by_address(item.disaster_location)
-            item.disaster_longitude = locs['lng']
-            item.disaster_latitude = locs['lat']
-            item.save()
-            print(item.to_dict())
+    AIDisasterForecast.objects.filter(disaster_latitude='-1').delete()
+    re = AIDisasterForecast.objects.filter(disaster_latitude='-1').all()
+    print(len(re))
     return build_success_json_response()
 
     # items = AIDisasterForecast.objects.filter(disaster_longitude='-1').all()
@@ -124,6 +119,8 @@ def test(request:HttpRequest):
     #     dis.published=True
     #     dis.save()
     # return build_success_json_response()
+    # result = UserProfile.objects.filter().all()
+    # return build_success_json_response(result)
 
 
 

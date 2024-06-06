@@ -37,6 +37,7 @@ class Login(APIView):
         payload = {
             'user_id': user_object.id,
             'username': user_object.username,
+            'level' : user_object.level,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=900)
         }
         result = user_object.to_dict()
@@ -104,7 +105,8 @@ class Register(APIView):
                 payload = {
                     'user_id': user.id,
                     'username': user.username,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=150)
+                    'level': user.level,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=900)
                 }
                 result = user.to_dict()
                 access_token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
@@ -161,7 +163,8 @@ class Retrieve(APIView):
                 payload = {
                     'user_id': user.id,
                     'username': user.username,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=150)
+                    'level': user.level,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=900)
                 }
                 result = user.to_dict()
                 access_token = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
