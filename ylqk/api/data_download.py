@@ -10,7 +10,7 @@ from ylqk.models import DownloadItem, DataDescriptionImage
 ROOT_PATH = "/root/SE2024/se2024_backend/"
 DATA_PATH = "file/data"
 IMAGES_PATH = "file/images"
-PAGE_SIZE = 20
+PAGE_SIZE = 10
 
 
 def _file_rename(origin_name: str, is_data: bool = False) -> str:
