@@ -69,8 +69,8 @@ def file_delete(request: HttpRequest):
 @require_GET
 def file_search(request: HttpRequest):
     keyword = request.GET.get("keyword")
-    page = request.GET.get("page") if request.GET.get("page") is not None else 1
-    if keyword is not None:
+    page = int(request.GET.get("page")) if request.GET.get("page") is not None and request.GET.get("page") != "" else 1
+    if keyword is not None and keyword != "":
         item_all = DownloadItem.objects.filter(title__icontains=keyword)
     else:
         item_all = DownloadItem.objects.all()
