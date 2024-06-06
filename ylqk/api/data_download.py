@@ -7,8 +7,9 @@ from django.views.decorators.http import require_POST, require_GET
 from utils.response_util import *
 from ylqk.models import DownloadItem, DataDescriptionImage
 
-DATA_PATH = "/root/SE2024/se2024_backend/file/data"
-IMAGES_PATH = "/root/SE2024/se2024_backend/file/images"
+ROOT_PATH = "/root/SE2024/se2024_backend/"
+DATA_PATH = "file/data"
+IMAGES_PATH = "file/images"
 PAGE_SIZE = 20
 
 
@@ -21,7 +22,8 @@ def _file_rename(origin_name: str, is_data: bool = False) -> str:
         rename = f"{datestamp}-{name_rand}.{suffix}" if is_data else f"{name_rand}.{suffix}"
     else:
         rename = f"{datestamp}-{name_rand}" if is_data else f"{name_rand}"
-    if (is_data and rename in os.listdir(DATA_PATH)) or (not is_data and rename in os.listdir(IMAGES_PATH)):
+    if (is_data and rename in os.listdir(ROOT_PATH + DATA_PATH)) or \
+            (not is_data and rename in os.listdir(ROOT_PATH + IMAGES_PATH)):
         return _file_rename(origin_name, is_data=is_data)
     return rename
 
@@ -35,7 +37,7 @@ def file_upload(request: HttpRequest):
     images = request.FILES.getlist("images")
 
     file_rename = _file_rename(file.name, is_data=True)
-    file_url = f"{DATA_PATH}/{file_rename}"
+    file_url = f"{ROOT_PATH + DATA_PATH}/{file_rename}"
     with open(file_url, "wb") as f:
         f.write(file.file.read())
     DownloadItem.objects.create(
@@ -48,7 +50,7 @@ def file_upload(request: HttpRequest):
     for upload_image in images:
         image_rename = _file_rename(upload_image.name)
         image_url = f"{IMAGES_PATH}/{image_rename}"
-        with open(image_url, "wb") as image:
+        with open(ROOT_PATH + image_url, "wb") as image:
             image.write(upload_image.file.read())
         DataDescriptionImage.objects.create(
             belongs2id=download_item.file_id,

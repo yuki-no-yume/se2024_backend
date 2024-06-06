@@ -185,3 +185,5 @@ email_title = '邮箱激活'
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'UTC'
+
+IMAGE_ROOT = os.path.join(BASE_DIR, "file/images/")
