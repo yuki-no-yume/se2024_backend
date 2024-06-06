@@ -91,9 +91,9 @@ def file_search(request: HttpRequest):
     })
 
 
-@require_POST
+@require_GET
 def file_download(request: HttpRequest):
-    file_id = request.POST.get("file_id")
+    file_id = request.GET.get("file_id")
     download_item = DownloadItem.objects.filter(file_id=file_id).first()
     if download_item is None:
         return build_failed_json_response(StatusCode.NOT_FOUND, message="文件不存在")
