@@ -16,7 +16,7 @@ def get_subscriced_all(request:HttpRequest):
 
 @require_GET
 def get_all_published_disasters(request:HttpRequest):
-    begin_time = datetime(1970,1,1,12,0,0,tzinfo=timezone.utc)
+    begin_time = datetime(1970,1,1,12,0,0)
     if request.GET.get("begin_time"):
         begin_time = request.GET.get("begin_time")
         begin_time = datetime.strptime(begin_time,'%Y%m%d%H%M%S')

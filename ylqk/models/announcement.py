@@ -1,10 +1,12 @@
+from datetime import datetime, timedelta
+
 from django.db import models
 from polymorphic.models import PolymorphicModel
 
 
 # 模型输出还没确定
 class AIDisasterForecast(models.Model):
-    datatime = models.DateTimeField(auto_now_add=True)
+    datatime = models.DateTimeField()
     disaster_type = models.CharField(max_length=10)
     disaster_level = models.CharField(max_length=5)
     disaster_location = models.CharField(max_length=20)
@@ -16,6 +18,11 @@ class AIDisasterForecast(models.Model):
 
     class Meta:
         db_table = "AIDisasterForecast"
+
+    def save(self,*args,**kwargs):
+        if not self.datatime:
+            self.datatime = datetime.now()
+        super().save(*args,**kwargs)
 
     def to_dict(self):
         return {
