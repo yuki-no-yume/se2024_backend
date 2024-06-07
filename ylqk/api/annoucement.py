@@ -41,7 +41,7 @@ def get_all_mails(request: HttpRequest):
     if user.level == '2' or user.level == '3':
         admincorres = ForecastForAdmin.objects.filter(rec_id=id).all()
     result = list(chain(forewarn, admincorres))
-    sorted_result = sorted(result, key=lambda x: x.id)
+    sorted_result = sorted(result, key=lambda x: x.id,reverse=True)
     data = []
     for elm in sorted_result:
         data.append(elm.to_dict())
